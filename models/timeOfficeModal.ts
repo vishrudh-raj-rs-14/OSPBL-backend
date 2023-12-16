@@ -15,6 +15,19 @@ const timeOfficeSchema = new mongoose.Schema({
     ref: "Party",
     required: [true, "Please select a party"],
   },
+  category: {
+    type: {
+      type: String,
+      enum: ["waste-paper", "fuel", "chemical", "other"],
+      required: [true, "Please enter your category"],
+      maxLength: [30, "Your category cannot exceed 30 characters"],
+    },
+  },
+  description: {
+    type: String,
+    required: [true, "Please enter your description"],
+    maxLength: [200, "Your description cannot exceed 200 characters"],
+  },
 });
 
 timeOfficeSchema.pre("save", async function (next) {

@@ -72,7 +72,7 @@ const gettimeOfficebyId = expressAsyncHandler(async (req, res) => {
 });
 
 const createtimeOffice = expressAsyncHandler(async (req, res) => {
-  const { party, vehicleNumber } = req.body;
+  const { party, vehicleNumber, category, description } = req.body;
   const partyRecord = await Party.findById(party);
   if (!partyRecord) {
     res.status(404).json({
@@ -84,6 +84,8 @@ const createtimeOffice = expressAsyncHandler(async (req, res) => {
   const timeOfficeRecord = await timeOffice.create({
     party,
     vehicleNumber,
+    category,
+    description,
   });
   res.status(201).json({
     status: "success",
@@ -92,7 +94,7 @@ const createtimeOffice = expressAsyncHandler(async (req, res) => {
 });
 
 const updatetimeOffice = expressAsyncHandler(async (req, res) => {
-  const { party, vehicleNumber } = req.body;
+  const { party, vehicleNumber, category, description } = req.body;
   if (!req.params.id) {
     res.status(400).json({
       status: "fail",
@@ -110,6 +112,8 @@ const updatetimeOffice = expressAsyncHandler(async (req, res) => {
   }
   timeOfficeRecord.party = party;
   timeOfficeRecord.vehicleNumber = vehicleNumber;
+  timeOfficeRecord.category = category;
+  timeOfficeRecord.description = description;
   await timeOfficeRecord.save();
   res.status(200).json({
     status: "success",

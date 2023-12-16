@@ -13,8 +13,8 @@ const timeOfficeRouter = express.Router();
 
 timeOfficeRouter.get(
   "/",
-  protect,
-  restricTo("ADMIN", "SECURITY"),
+  // protect,
+  // restricTo("ADMIN", "SECURITY"),
   gettimeOfficeRecordsOfDay
 );
 timeOfficeRouter.get("/all", protect, restricTo("ADMIN"), getAlltimeOffices);
