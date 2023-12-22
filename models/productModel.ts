@@ -25,6 +25,11 @@ const productSchema = new mongoose.Schema({
     maxLength: [30, "Your code cannot exceed 30 characters"],
     unique: [true, "This product already exists"],
   },
+  category: {
+    type: String,
+    enum: ["waste-paper", "fuel", "chemical", "other"],
+    // required: [true, "Please enter your category"],
+  },
 });
 
 productSchema.pre("save", async function (next) {

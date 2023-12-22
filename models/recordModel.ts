@@ -40,8 +40,8 @@ const recordSchema = new mongoose.Schema({
         },
       ],
       loss: {
-        type: Number,
-        default: 0,
+        type: String,
+        default: "0%",
       },
     },
   ],

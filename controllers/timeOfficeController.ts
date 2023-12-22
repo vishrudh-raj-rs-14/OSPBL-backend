@@ -73,6 +73,7 @@ const gettimeOfficebyId = expressAsyncHandler(async (req, res) => {
 
 const createtimeOffice = expressAsyncHandler(async (req, res) => {
   const { party, vehicleNumber, category, description } = req.body;
+  console.log(category);
   const partyRecord = await Party.findById(party);
   if (!partyRecord) {
     res.status(404).json({

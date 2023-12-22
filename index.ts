@@ -10,6 +10,7 @@ import productRouter from "./routes/productRouter";
 import timeOfficeRouter from "./routes/timeOfficeRoutes";
 import weightsRouter from "./routes/weightsRouter";
 import recordRouter from "./routes/recordRouter";
+import cors from "cors";
 dotenv.config();
 
 connectDatabase("OSPBL");
@@ -17,6 +18,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL as string],
+    credentials: true,
+  })
+);
 
 const port = process.env.PORT || 3000;
 

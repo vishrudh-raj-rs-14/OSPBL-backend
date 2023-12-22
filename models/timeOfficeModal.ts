@@ -16,12 +16,10 @@ const timeOfficeSchema = new mongoose.Schema({
     required: [true, "Please select a party"],
   },
   category: {
-    type: {
-      type: String,
-      enum: ["waste-paper", "fuel", "chemical", "other"],
-      required: [true, "Please enter your category"],
-      maxLength: [30, "Your category cannot exceed 30 characters"],
-    },
+    type: String,
+    enum: ["waste-paper", "fuel", "chemical", "other"],
+    required: [true, "Please enter your category"],
+    maxLength: [30, "Your category cannot exceed 30 characters"],
   },
   description: {
     type: String,
