@@ -67,7 +67,7 @@ const createProduct = expressAsyncHandler(async (req, res) => {
 });
 
 const updateProduct = expressAsyncHandler(async (req, res) => {
-  const { name } = req.body;
+  const { name, category } = req.body;
   if (!req.params.id) {
     res.status(400).json({
       status: "fail",
@@ -84,6 +84,7 @@ const updateProduct = expressAsyncHandler(async (req, res) => {
     return;
   }
   product.name = name;
+  product.category = category;
   await product.save();
   res.status(200).json({
     status: "success",

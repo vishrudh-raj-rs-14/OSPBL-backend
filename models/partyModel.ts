@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import TimeOffice from "./timeOfficeModal";
 
 const partySchema = new mongoose.Schema({
   partyName: {

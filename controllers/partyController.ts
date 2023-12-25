@@ -1,5 +1,7 @@
 import Party from "../models/partyModel";
 import expressAsyncHandler from "express-async-handler";
+import Product from "../models/productModel";
+import TimeOffice from "../models/timeOfficeModal";
 
 const getAllParties = expressAsyncHandler(async (req, res) => {
   const { partyName, gstNo, mobileNo } = req.query;
@@ -74,7 +76,7 @@ const updateParty = expressAsyncHandler(async (req, res) => {
   const party = await Party.findByIdAndUpdate(
     req.params.id,
     { partyName, gstNo, mobileNo, address, bankDetails },
-    { new: true }
+    { new: true, runValidators: true }
   );
   res.status(200).json({
     status: "success",
@@ -90,6 +92,18 @@ const deleteParty = expressAsyncHandler(async (req, res) => {
     });
     return;
   }
+  const products = await Product.find({
+    price: { $elemMatch: { party: req.params.id } },
+  });
+  const updatedProducts = products.map(async (product) => {
+    await Product.findByIdAndUpdate(
+      product._id,
+      { $pull: { price: { party: req.params.id } } },
+      { new: true, runValidators: true }
+    );
+  });
+  await Promise.all(updatedProducts);
+  await TimeOffice.deleteMany({ party: req.params.id });
   const party = await Party.findByIdAndDelete(req.params.id);
   res.status(200).json({
     status: "success",
