@@ -5,7 +5,15 @@ const weightsSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-  weight: {
+  weight1: {
+    type: Number,
+    required: [true, "Please enter weight1"],
+  },
+  weight2: {
+    type: Number,
+    required: [true, "Please enter weight1"],
+  },
+  netWeight: {
     type: Number,
     required: [true, "Please enter your weight"],
   },
@@ -15,16 +23,15 @@ const weightsSchema = new mongoose.Schema({
     maxLength: [30, "Your vehicleNumber cannot exceed 30 characters"],
   },
   image1: {
-    type: String,
-    // required: [true, "Please enter your image1"],
+    type: Buffer,
+    required: true,
   },
   image2: {
-    type: String,
-    // required: [true, "Please enter your image2"],
+    type: Buffer,
+    required: true,
   },
   sentBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Party",
+    type: String,
   },
 });
 

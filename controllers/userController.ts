@@ -32,13 +32,8 @@ const login = expressAsyncHandler(async (req, res) => {
 });
 
 const register = expressAsyncHandler(async (req, res) => {
-  const { name, email, password, confirmPassword, role, mobileNo } = req.body;
-  if (password !== confirmPassword) {
-    res.status(400).json({
-      status: "fail",
-      message: "Passwords do not match",
-    });
-  }
+  const { name, email, password, role, mobileNo } = req.body;
+
   if (role == "ADMIN") {
     res.status(400).json({
       status: "fail",
@@ -53,7 +48,7 @@ const register = expressAsyncHandler(async (req, res) => {
       message: "User already exists",
     });
   }
-  const user = await User.create({ name, email, password, mobileNo });
+  const user = await User.create({ name, role, email, password, mobileNo });
   if (process.env.ENV != "DEV") {
     user.password = "";
   }

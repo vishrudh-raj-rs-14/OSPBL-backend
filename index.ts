@@ -9,7 +9,9 @@ import partyRouter from "./routes/partyRouter";
 import productRouter from "./routes/productRouter";
 import timeOfficeRouter from "./routes/timeOfficeRoutes";
 import weightsRouter from "./routes/weightsRouter";
-import recordRouter from "./routes/recordRouter";
+import voucherRouter from "./routes/voucherRouter";
+import accountantRouter from "./routes/accountantRouter";
+import reportRouter from "./routes/reportRouter";
 import cors from "cors";
 dotenv.config();
 
@@ -32,7 +34,9 @@ app.use("/api/parties", partyRouter);
 app.use("/api/products", productRouter);
 app.use("/api/timeOffice", timeOfficeRouter);
 app.use("/api/weights", weightsRouter);
-app.use("/api/reports", recordRouter);
+app.use("/api/reports", voucherRouter);
+app.use("/api/payments", accountantRouter);
+app.use("/api/report", reportRouter);
 
 app.use("/test", protect, restricTo("ADMIN"), (req, res) => {
   res.status(200).json({

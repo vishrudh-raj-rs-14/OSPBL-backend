@@ -1,4 +1,9 @@
-import express from "express";
+import multer from "multer";
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+export { upload };
 
 import { protect, restricTo } from "../controllers/userController";
 import {
@@ -6,12 +11,15 @@ import {
   deleteAllWeights,
   deleteWeights,
   getAllWeights,
+  uploadUserPhotos,
+  resizeUserPhoto,
 } from "../controllers/weightsController";
+import express, { RequestHandler } from "express";
 
 const weightsRouter = express.Router();
 
 weightsRouter.get("/", getAllWeights);
-weightsRouter.post("/", createWeights);
+weightsRouter.post("/", uploadUserPhotos, resizeUserPhoto, createWeights);
 weightsRouter.delete("/:id", protect, restricTo("ADMIN"), deleteWeights);
 weightsRouter.delete("/all", protect, restricTo("ADMIN"), deleteAllWeights);
 
