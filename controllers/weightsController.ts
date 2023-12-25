@@ -1,9 +1,10 @@
 import Weights from "../models/weightsModel";
 import expressAsyncHandler from "express-async-handler";
-import multer, { Multer } from "multer";
+import multer from "multer";
 import { Request, Response } from "express";
 
 import Jimp from "jimp";
+import sharp from "sharp";
 
 const multerStorage = multer.memoryStorage();
 
@@ -23,68 +24,61 @@ const upload = multer({
   fileFilter: multerFilter as any,
 });
 
-const uploadUserPhotos = upload.fields([
-  { name: "image1", maxCount: 1 },
-  { name: "image2", maxCount: 1 },
-]);
+const uploadPhotos = upload.array("images", 2);
 
-const resizeUserPhoto = async (req: any, res: any, next: any) => {
-  if (!req.files) {
-    console.log("hellossssoo");
-    return next();
+const processImages = expressAsyncHandler(async (req: any, res, next) => {
+  if (!req.files) return next();
+  let fileNames: any = [null, null];
+  let processed: any = req.files;
+  await Promise.all(
+    processed.map(async (ele: any, i: number) => {
+      const fileName = `weight-${Date.now()}-${i}.jpg`;
+      await sharp(processed[i].buffer)
+        .resize(500, 500)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/weightBridge/${fileName}`);
+
+      fileNames[i] = fileName;
+    })
+  );
+  req.body.fileNames = fileNames;
+  next();
+});
+
+const createWeights = expressAsyncHandler(async (req: any, res: any) => {
+  const { vehicleNumber, party, weight1, weight2, netWeight } = req.body;
+  if (!vehicleNumber || !party || !weight1 || !weight2 || !netWeight) {
+    return res.status(400).json({
+      message: "All fields are required",
+    });
   }
+  if (
+    !req.body.fileNames ||
+    req.body.fileNames.length != 2 ||
+    req.body.fileNames[0] == undefined ||
+    req.body.fileNames[1] == undefined
+  ) {
+    return res.status(400).json({
+      message: "Both images are required",
+    });
+  }
+  const measuredAt = new Date();
 
-  const resizePromises = Object.keys(req.files).map(async (fieldName) => {
-    const file = req.files[fieldName][0];
-    file.filename = `photo-${Date.now()}.jpeg`;
-
-    const image = await Jimp.read(file.buffer);
-    await image.resize(500, 500);
-    await image.quality(90);
-    await image.writeAsync(`./../uploads/${file.filename}`);
-    console.log("created");
+  // Create a new Weights document
+  const weights = await Weights.create({
+    measuredAt,
+    weight1,
+    weight2,
+    netWeight,
+    vehicleNumber,
+    party,
+    image1: req.body.fileNames[0],
+    image2: req.body.fileNames[1],
   });
 
-  await Promise.all(resizePromises);
-
-  next();
-};
-
-const createWeights = async (req: any, res: any) => {
-  try {
-    console.log("hlo");
-
-    const { weight, vehicleNumber, sentBy, image1, image2 } = req.body as {
-      weight: any;
-      vehicleNumber: any;
-      sentBy: any;
-      image1: any;
-      image2: any;
-    };
-
-    if (!image1 || !image2) {
-      return res.status(400).json({
-        message: "Both image1 and image2 are required",
-      });
-    }
-
-    const measuredAt = new Date();
-
-    // Create a new Weights document
-    const weights = await Weights.create({
-      measuredAt,
-      weight,
-      vehicleNumber,
-      sentBy,
-      image1,
-      image2,
-    });
-
-    res.status(201).json({ message: "Weights created successfully" }, weights);
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
+  res.status(201).json({ message: "Weights created successfully", weights });
+});
 
 const getAllWeights = expressAsyncHandler(async (req, res) => {
   const weights = await Weights.find();
@@ -146,6 +140,6 @@ export {
   createWeights,
   deleteWeights,
   deleteAllWeights,
-  uploadUserPhotos,
-  resizeUserPhoto,
+  uploadPhotos,
+  processImages,
 };

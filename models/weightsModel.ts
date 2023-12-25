@@ -23,15 +23,17 @@ const weightsSchema = new mongoose.Schema({
     maxLength: [30, "Your vehicleNumber cannot exceed 30 characters"],
   },
   image1: {
-    type: Buffer,
+    type: String,
     required: true,
   },
   image2: {
-    type: Buffer,
+    type: String,
     required: true,
   },
-  sentBy: {
-    type: String,
+  party: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Party",
+    // required: [true, "Please select a party"],
   },
 });
 

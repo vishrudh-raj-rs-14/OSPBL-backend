@@ -11,15 +11,15 @@ import {
   deleteAllWeights,
   deleteWeights,
   getAllWeights,
-  uploadUserPhotos,
-  resizeUserPhoto,
+  uploadPhotos,
+  processImages,
 } from "../controllers/weightsController";
 import express, { RequestHandler } from "express";
 
 const weightsRouter = express.Router();
 
 weightsRouter.get("/", getAllWeights);
-weightsRouter.post("/", uploadUserPhotos, resizeUserPhoto, createWeights);
+weightsRouter.post("/", uploadPhotos, processImages, createWeights);
 weightsRouter.delete("/:id", protect, restricTo("ADMIN"), deleteWeights);
 weightsRouter.delete("/all", protect, restricTo("ADMIN"), deleteAllWeights);
 
