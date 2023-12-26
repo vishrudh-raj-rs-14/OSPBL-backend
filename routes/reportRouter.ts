@@ -3,6 +3,10 @@ import { getReport } from "../controllers/reportController";
 import { protect, restricTo } from "../controllers/userController";
 const reportRouter = express.Router();
 
-reportRouter.get("/", protect, restricTo("ADMIN"), getReport);
+reportRouter.get(
+  "/:partyId",
+  //  protect, restricTo("ADMIN"),
+  getReport
+);
 
 export default reportRouter;
