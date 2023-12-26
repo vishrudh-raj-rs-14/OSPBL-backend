@@ -46,13 +46,12 @@ const createPayment = expressAsyncHandler(async (req, res) => {
   const date = new Date();
   date.setHours(0, 0, 0, 0);
 
-  // await Report.create({
-  //   party,
-  //   debit: 0,
-  //   credit: checkAmount,
-  //   materials: invoice?.Items,
-  //   date,
-  // });
+  await Report.create({
+    party,
+    debit: 0,
+    credit: checkAmount,
+    date,
+  });
   await Invoice.findByIdAndUpdate(invoices[0]?._id, {
     balanceAmount,
   });

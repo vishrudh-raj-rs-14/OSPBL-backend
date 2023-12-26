@@ -59,13 +59,12 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
   const date = new Date();
   date.setHours(0, 0, 0, 0);
 
-  // await Report.create({
-  //   party: party.partyName,
-  //   debit: totalPurchase,
-  //   credit: 0,
-  //   materials: Items,
-  //   date,
-  // });
+  await Report.create({
+    party: party,
+    debit: totalPurchase,
+    credit: 0,
+    date,
+  });
   if (!totalPurchase || !party || !vehicleNumber || !Items) {
     res.status(400).json({
       status: "fail",

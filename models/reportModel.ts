@@ -2,12 +2,10 @@ import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema({
   party: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Party",
   },
-  materials: {
-    type: String,
-    required: [true, "Please enter the materials"],
-  },
+
   debit: {
     type: Number,
     required: [true, "Please enter the debit"],
