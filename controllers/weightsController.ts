@@ -46,8 +46,8 @@ const processImages = expressAsyncHandler(async (req: any, res, next) => {
 });
 
 const createWeights = expressAsyncHandler(async (req: any, res: any) => {
-  const { vehicleNumber, loss, party, weight1, weight2, netWeight } = req.body;
-  if (!loss || !vehicleNumber || !party || !weight1 || !weight2 || !netWeight) {
+  const { vehicleNumber, party, weight1, weight2, netWeight } = req.body;
+  if (!vehicleNumber || !party || !weight1 || !weight2 || !netWeight) {
     return res.status(400).json({
       message: "All fields are required",
     });
@@ -66,7 +66,6 @@ const createWeights = expressAsyncHandler(async (req: any, res: any) => {
 
   // Create a new Weights document
   const weights = await Weights.create({
-    loss,
     measuredAt,
     weight1,
     weight2,

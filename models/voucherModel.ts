@@ -6,7 +6,7 @@ const voucherSchema = new mongoose.Schema({
     default: Date.now(),
   },
 
-  soldBy: {
+  party: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Party",
     required: [true, "Please select a party"],

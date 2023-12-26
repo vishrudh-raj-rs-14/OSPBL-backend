@@ -1,11 +1,6 @@
 import mongoose from "mongoose";
 
 const weightsSchema = new mongoose.Schema({
-  loss: {
-    type: Number,
-    required: [true, "Please enter loss"],
-  },
-
   measuredAt: {
     type: Date,
     default: Date.now(),

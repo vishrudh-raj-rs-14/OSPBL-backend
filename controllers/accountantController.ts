@@ -22,7 +22,7 @@ const getInvoiceForAccountant = expressAsyncHandler(async (req, res) => {
 
 const createPayment = expressAsyncHandler(async (req, res) => {
   const { invoice, checkID, checkAmount, checkDate } = req.body;
-
+  console.log(checkAmount, checkDate, checkID, invoice);
   if (
     invoice == null ||
     checkID == null ||
@@ -35,24 +35,29 @@ const createPayment = expressAsyncHandler(async (req, res) => {
     });
     return;
   }
-  console.log(invoice, "voucher");
   const objectId = new mongoose.Types.ObjectId(invoice);
   const invoiceTemp = await Invoice.findById(objectId);
-  console.log(invoice);
+  if (!invoiceTemp) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invoice not found",
+    });
+    return;
+  }
   const party = await Party.findById(invoiceTemp?.soldBy).select("partyName");
   const invoices = await Invoice.find({ soldBy: invoiceTemp?.soldBy });
-  const totalPurchase = invoices[0]?.totalPurchase;
-  const balanceAmount = totalPurchase - checkAmount;
+  const currentBalance = invoiceTemp.balanceAmount;
+  const balanceAmount = Number(currentBalance) - Number(checkAmount);
   const date = new Date();
   date.setHours(0, 0, 0, 0);
-
+  console.log(party, currentBalance, date, invoices, checkAmount);
   await Report.create({
     party,
     debit: 0,
     credit: checkAmount,
     date,
   });
-  await Invoice.findByIdAndUpdate(invoices[0]?._id, {
+  await Invoice.findByIdAndUpdate(invoice, {
     balanceAmount,
   });
 

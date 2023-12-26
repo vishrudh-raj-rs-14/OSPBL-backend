@@ -2,6 +2,7 @@ import Voucher from "../models/voucherModel";
 import expressAsyncHandler from "express-async-handler";
 import Report from "../models/reportModel";
 import Invoice from "../models/invoiceModel";
+import Product from "../models/productModel";
 
 const getAllVouchers = expressAsyncHandler(async (req, res) => {
   const filter: any = {};
@@ -55,9 +56,42 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
 });
 
 const createVoucher = expressAsyncHandler(async (req, res) => {
-  const { totalPurchase, party, vehicleNumber, Items } = req.body;
+  const { party, vehicleNumber, Items } = req.body;
+  console.log(req.body);
   const date = new Date();
   date.setHours(0, 0, 0, 0);
+  if (!party || !vehicleNumber || !Items) {
+    res.status(400).json({
+      status: "fail",
+      message: "party, vehicleNumber, Items are required",
+    });
+    return;
+  }
+
+  const itemsWithPricePromise = Items.map(async (item: any) => {
+    const unitPrice = (await Product.findById(item.item.id))?.price?.find(
+      (price: any) => price.party == party
+    );
+    return {
+      ...item,
+      unitPrice: unitPrice?.amount,
+      netPrice: (unitPrice?.amount as number) * item.weight,
+      priceAssigned: unitPrice ? true : false,
+    };
+  });
+  const itemsWithPrice = await Promise.all(itemsWithPricePromise);
+  for (let i = 0; i < itemsWithPrice.length; i++) {
+    if (!itemsWithPrice[i].priceAssigned) {
+      res.status(400).json({
+        status: "fail",
+        message: "price not assigned for item",
+      });
+      return;
+    }
+  }
+  const totalPurchase = itemsWithPrice.reduce((acc: number, item: any) => {
+    return acc + item.netPrice;
+  }, 0);
 
   await Report.create({
     party: party,
@@ -65,17 +99,13 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
     credit: 0,
     date,
   });
-  if (!totalPurchase || !party || !vehicleNumber || !Items) {
-    res.status(400).json({
-      status: "fail",
-      message: "totalPurchase, soldBy, vehicleNumber, Items not provided",
-    });
-    return;
-  }
+
   const invoice = await Invoice.create({
     soldBy: party,
     vehicleNumber,
-    Items,
+    Items: itemsWithPrice.map((item: any) => {
+      return { ...item, item: item.item.name };
+    }),
     totalPurchase,
     balanceAmount: totalPurchase,
   });
@@ -83,15 +113,21 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
     const { unitPrice, netPrice, ...rest } = item;
     return rest;
   });
-  console.log(modifiedItems);
+  console.log(
+    Items.map((item: any) => {
+      return { ...item, item: item.item.name };
+    })
+  );
   const voucher = await Voucher.create({
-    soldBy: party,
+    party: party,
     vehicleNumber,
-    Items: modifiedItems,
+    Items: Items.map((item: any) => {
+      return { ...item, item: item.item.name };
+    }),
   });
   res.status(201).json({
     status: "success",
-    invoice,
+    // invoice,
     voucher,
   });
 });
