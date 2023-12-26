@@ -1,6 +1,7 @@
 import Voucher from "../models/voucherModel";
 import expressAsyncHandler from "express-async-handler";
 import Report from "../models/reportModel";
+import Invoice from "../models/invoiceModel";
 
 const getAllVouchers = expressAsyncHandler(async (req, res) => {
   const filter: any = {};
@@ -54,31 +55,44 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
 });
 
 const createVoucher = expressAsyncHandler(async (req, res) => {
-  const { totalPurchase, soldBy, vehicleNumber, Items } = req.body;
+  const { totalPurchase, party, vehicleNumber, Items } = req.body;
   const date = new Date();
   date.setHours(0, 0, 0, 0);
 
-  await Report.create({
-    party: soldBy.partyName,
-    debit: totalPurchase,
-    credit: 0,
-    materials: Items,
-    date,
-  });
-  if (!totalPurchase || !soldBy || !vehicleNumber || !Items) {
+  // await Report.create({
+  //   party: party.partyName,
+  //   debit: totalPurchase,
+  //   credit: 0,
+  //   materials: Items,
+  //   date,
+  // });
+  if (!totalPurchase || !party || !vehicleNumber || !Items) {
     res.status(400).json({
       status: "fail",
       message: "totalPurchase, soldBy, vehicleNumber, Items not provided",
     });
     return;
   }
-  const voucher = await Voucher.create({
-    soldBy,
+  const invoice = await Invoice.create({
+    soldBy: party,
     vehicleNumber,
     Items,
+    totalPurchase,
+    balanceAmount: totalPurchase,
+  });
+  const modifiedItems = Items.map((item: any) => {
+    const { unitPrice, netPrice, ...rest } = item;
+    return rest;
+  });
+  console.log(modifiedItems);
+  const voucher = await Voucher.create({
+    soldBy: party,
+    vehicleNumber,
+    Items: modifiedItems,
   });
   res.status(201).json({
     status: "success",
+    invoice,
     voucher,
   });
 });

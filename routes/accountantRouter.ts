@@ -8,14 +8,14 @@ const accountantRouter = express.Router();
 
 accountantRouter.post(
   "/",
-  protect,
-  restricTo("ADMIN", "ACCOUNTANT"),
+  // protect,
+  // restricTo("ADMIN", "ACCOUNTANT"),
   createPayment
 );
 accountantRouter.get(
   "/invoice",
-  protect,
-  restricTo("ADMIN", "ACCOUNTANT"),
+  // protect,
+  // restricTo("ADMIN", "ACCOUNTANT"),
   getInvoiceForAccountant
 );
 

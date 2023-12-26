@@ -18,8 +18,8 @@ voucherRouter.get(
 voucherRouter.get("/all", protect, restricTo("ADMIN"), getAllVouchers);
 voucherRouter.post(
   "/",
-  protect,
-  restricTo("ADMIN", "GRADE_CHECKER"),
+  // protect,
+  // restricTo("ADMIN", "GRADE_CHECKER"),
   createVoucher
 );
 voucherRouter.delete("/:id", protect, restricTo("ADMIN"), deleteVoucher);

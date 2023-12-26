@@ -3,7 +3,6 @@ import expressAsyncHandler from "express-async-handler";
 import multer from "multer";
 import { Request, Response } from "express";
 
-import Jimp from "jimp";
 import sharp from "sharp";
 
 const multerStorage = multer.memoryStorage();
@@ -47,8 +46,8 @@ const processImages = expressAsyncHandler(async (req: any, res, next) => {
 });
 
 const createWeights = expressAsyncHandler(async (req: any, res: any) => {
-  const { vehicleNumber, party, weight1, weight2, netWeight } = req.body;
-  if (!vehicleNumber || !party || !weight1 || !weight2 || !netWeight) {
+  const { vehicleNumber, loss, party, weight1, weight2, netWeight } = req.body;
+  if (!loss || !vehicleNumber || !party || !weight1 || !weight2 || !netWeight) {
     return res.status(400).json({
       message: "All fields are required",
     });
@@ -67,6 +66,7 @@ const createWeights = expressAsyncHandler(async (req: any, res: any) => {
 
   // Create a new Weights document
   const weights = await Weights.create({
+    loss,
     measuredAt,
     weight1,
     weight2,
@@ -81,32 +81,28 @@ const createWeights = expressAsyncHandler(async (req: any, res: any) => {
 });
 
 const getAllWeights = expressAsyncHandler(async (req, res) => {
-  const weights = await Weights.find();
-  res.status(200).json(weights);
-});
-
-const getWeightsRecordsOfDay = expressAsyncHandler(async (req, res) => {
-  const limit = parseInt(req.query.limit as string) || 30;
   const startOfDay = new Date();
   startOfDay.setUTCHours(0, 0, 0, 0);
 
-  const endOfDay = new Date();
-  endOfDay.setUTCHours(23, 59, 59, 999);
-  let weightsRecords: any = Weights.find({
+  const weights = await Weights.find({
     measuredAt: {
       $gte: startOfDay,
-      $lt: endOfDay,
     },
   })
-    .sort({ measuredAt: -1 })
-    .populate("party");
-  if (limit != -1) {
-    weightsRecords = weightsRecords.limit(limit);
-  }
-  weightsRecords = await weightsRecords;
+    .populate("party", "partyName")
+    .sort({ measuredAt: -1 });
+
+  res.status(200).json(weights);
+});
+
+const getAllCompleteWeights = expressAsyncHandler(async (req, res) => {
+  const weights = await Weights.find()
+    .populate("party", "partyName")
+    .sort({ measuredAt: -1 });
+
   res.status(200).json({
     status: "success",
-    weightsRecords,
+    weights,
   });
 });
 
@@ -136,7 +132,7 @@ const deleteAllWeights = expressAsyncHandler(async (req, res) => {
 
 export {
   getAllWeights,
-  getWeightsRecordsOfDay,
+  getAllCompleteWeights,
   createWeights,
   deleteWeights,
   deleteAllWeights,

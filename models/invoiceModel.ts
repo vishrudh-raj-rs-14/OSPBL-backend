@@ -25,8 +25,8 @@ const invoiceSchema = new mongoose.Schema({
   Items: [
     {
       item: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        type: String,
+        // ref: "Product",
         required: [true, "Please select a product"],
       },
       netPrice: {

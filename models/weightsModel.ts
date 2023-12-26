@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const weightsSchema = new mongoose.Schema({
+  loss: {
+    type: Number,
+    required: [true, "Please enter loss"],
+  },
+
   measuredAt: {
     type: Date,
     default: Date.now(),
@@ -37,15 +42,15 @@ const weightsSchema = new mongoose.Schema({
   },
 });
 
-weightsSchema.pre("save", async function (next) {
-  this.vehicleNumber = this.vehicleNumber
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "")
-    .replace(/^-+|-+$/g, "");
-  next();
-});
+// weightsSchema.pre("save", async function (next) {
+//   this.vehicleNumber = this.vehicleNumber
+//     .toLowerCase()
+//     .trim()
+//     .replace(/[^\w\s-]/g, "")
+//     .replace(/[\s_-]+/g, "")
+//     .replace(/^-+|-+$/g, "");
+//   next();
+// });
 
 const Weights = mongoose.model("Weights", weightsSchema);
 

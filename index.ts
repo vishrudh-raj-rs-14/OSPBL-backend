@@ -13,6 +13,7 @@ import voucherRouter from "./routes/voucherRouter";
 import accountantRouter from "./routes/accountantRouter";
 import reportRouter from "./routes/reportRouter";
 import cors from "cors";
+import path from "path";
 dotenv.config();
 
 connectDatabase("OSPBL");
@@ -28,13 +29,13 @@ app.use(
 );
 
 const port = process.env.PORT || 3000;
-
+app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/api/users", userRouter);
 app.use("/api/parties", partyRouter);
 app.use("/api/products", productRouter);
 app.use("/api/timeOffice", timeOfficeRouter);
 app.use("/api/weights", weightsRouter);
-app.use("/api/reports", voucherRouter);
+app.use("/api/vouchers", voucherRouter);
 app.use("/api/payments", accountantRouter);
 app.use("/api/report", reportRouter);
 

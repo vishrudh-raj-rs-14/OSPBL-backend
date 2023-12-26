@@ -16,12 +16,11 @@ const voucherSchema = new mongoose.Schema({
     required: [true, "Please enter your vehicleNumber"],
     maxLength: [30, "Your vehicleNumber cannot exceed 30 characters"],
   },
-
   Items: [
     {
       item: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        type: String,
+        // ref: "Product",
         required: [true, "Please select a product"],
       },
 

@@ -11,6 +11,7 @@ import {
   deleteAllWeights,
   deleteWeights,
   getAllWeights,
+  getAllCompleteWeights,
   uploadPhotos,
   processImages,
 } from "../controllers/weightsController";
