@@ -37,6 +37,11 @@ const weightsSchema = new mongoose.Schema({
   },
 });
 
+weightsSchema.pre("save", function (next) {
+  this.vehicleNumber = this.vehicleNumber.toUpperCase();
+  next();
+});
+
 // weightsSchema.pre("save", async function (next) {
 //   this.vehicleNumber = this.vehicleNumber
 //     .toLowerCase()

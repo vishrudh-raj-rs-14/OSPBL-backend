@@ -26,6 +26,10 @@ const timeOfficeSchema = new mongoose.Schema({
     required: [true, "Please enter your description"],
     maxLength: [200, "Your description cannot exceed 200 characters"],
   },
+  vehicleStillIn: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 timeOfficeSchema.pre("save", async function (next) {
@@ -35,6 +39,11 @@ timeOfficeSchema.pre("save", async function (next) {
     .replace(/[^\w\s-]/g, "")
     .replace(/[\s_-]+/g, "")
     .replace(/^-+|-+$/g, "");
+  next();
+});
+
+timeOfficeSchema.pre("save", function (next) {
+  this.vehicleNumber = this.vehicleNumber.toUpperCase();
   next();
 });
 

@@ -3,6 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import Report from "../models/reportModel";
 import Invoice from "../models/invoiceModel";
 import Product from "../models/productModel";
+import TimeOffice from "../models/timeOfficeModal";
 
 const getAllVouchers = expressAsyncHandler(async (req, res) => {
   const filter: any = {};
@@ -37,7 +38,19 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
 
   const endOfDay = new Date();
   endOfDay.setUTCHours(23, 59, 59, 999);
-  let voucher: any = Voucher.find({
+
+  const vehiclesIn = await TimeOffice.find({
+    date: {
+      $gte: startOfDay,
+      $lt: endOfDay,
+    },
+    vehicleStillIn: {
+      $ne: false,
+    },
+  });
+  console.log(vehiclesIn);
+
+  let voucher: any = await Voucher.find({
     date: {
       $gte: startOfDay,
       $lt: endOfDay,
@@ -45,10 +58,19 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
   })
     .sort({ date: -1 })
     .populate("party");
-  if (limit != -1) {
-    voucher = voucher.limit(limit);
-  }
-  voucher = await voucher;
+
+  console.log("-------------------");
+  console.log(voucher);
+  voucher = voucher.filter((voucher: any) => {
+    return vehiclesIn.find((vehicleIn: any) => {
+      return (
+        vehicleIn.vehicleNumber.toLowerCase() ==
+          voucher.vehicleNumber.toLowerCase() &&
+        String(vehicleIn.party) == String(voucher.party._id)
+      );
+    });
+  });
+
   res.status(200).json({
     status: "success",
     voucher,
@@ -148,4 +170,51 @@ const deleteVoucher = expressAsyncHandler(async (req, res) => {
   });
 });
 
-export { getAllVouchers, createVoucher, deleteVoucher, getVouchersofDay };
+const vehicleLeft = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({
+      status: "fail",
+      message: "id not provided",
+    });
+    return;
+  }
+  const today = new Date(); // Get current date
+  today.setHours(0, 0, 0, 0); // Set time to 00:00:00:00
+
+  const voucher = await Voucher.findById(id);
+  const timeOfficeRecord = await TimeOffice.find({
+    vehicleNumber: voucher?.vehicleNumber,
+    party: voucher?.party,
+    vehicleStillIn: true,
+    date: {
+      $gte: today,
+      $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+    },
+  }).sort({ date: -1 });
+
+  if (timeOfficeRecord.length == 0) {
+    res.status(400).json({
+      status: "fail",
+      message: "vehicle already left",
+    });
+    return;
+  }
+
+  await TimeOffice.findByIdAndUpdate(timeOfficeRecord[0]._id, {
+    vehicleStillIn: false,
+  });
+
+  res.status(200).json({
+    status: "success",
+    timeOfficeRecord,
+  });
+});
+
+export {
+  getAllVouchers,
+  createVoucher,
+  deleteVoucher,
+  getVouchersofDay,
+  vehicleLeft,
+};

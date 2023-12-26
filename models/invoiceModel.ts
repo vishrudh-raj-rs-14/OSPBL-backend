@@ -54,6 +54,11 @@ const invoiceSchema = new mongoose.Schema({
   ],
 });
 
+invoiceSchema.pre("save", function (next) {
+  this.vehicleNumber = this.vehicleNumber.toUpperCase();
+  next();
+});
+
 const Invoice = mongoose.model("Invoice", invoiceSchema);
 
 export default Invoice;
