@@ -5,7 +5,9 @@ const reportSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Party",
   },
-
+  Items: {
+    type: [String],
+  },
   debit: {
     type: Number,
     required: [true, "Please enter the debit"],

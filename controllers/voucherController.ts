@@ -90,6 +90,10 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
     return;
   }
 
+  const itemList = Items.map(
+    (item: { item: { name: string } }) => item.item.name
+  );
+
   const itemsWithPricePromise = Items.map(async (item: any) => {
     const unitPrice = (await Product.findById(item.item.id))?.price?.find(
       (price: any) => price.party == party
@@ -116,6 +120,7 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
   }, 0);
 
   await Report.create({
+    Items: itemList,
     party: party,
     debit: totalPurchase,
     credit: 0,
@@ -201,9 +206,17 @@ const vehicleLeft = expressAsyncHandler(async (req, res) => {
     return;
   }
 
-  await TimeOffice.findByIdAndUpdate(timeOfficeRecord[0]._id, {
-    vehicleStillIn: false,
-  });
+  const tempOfficeRecord = await TimeOffice.findByIdAndUpdate(
+    timeOfficeRecord[0]._id,
+    {
+      vehicleStillIn: false,
+    },
+    {
+      new: true,
+    }
+  );
+  console.log(tempOfficeRecord);
+  console.log(timeOfficeRecord, "timeOfficeRecord");
 
   res.status(200).json({
     status: "success",

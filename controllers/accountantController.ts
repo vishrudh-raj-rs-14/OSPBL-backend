@@ -22,7 +22,6 @@ const getInvoiceForAccountant = expressAsyncHandler(async (req, res) => {
 
 const createPayment = expressAsyncHandler(async (req, res) => {
   const { invoice, checkID, checkAmount, checkDate } = req.body;
-  console.log(checkAmount, checkDate, checkID, invoice);
   if (
     invoice == null ||
     checkID == null ||
@@ -44,18 +43,20 @@ const createPayment = expressAsyncHandler(async (req, res) => {
     });
     return;
   }
+  const Items = invoiceTemp.Items;
+  const itemList = Items.map((item: { item: string }) => item.item);
   const party = await Party.findById(invoiceTemp?.soldBy).select("partyName");
   const invoices = await Invoice.find({ soldBy: invoiceTemp?.soldBy });
   const currentBalance = invoiceTemp.balanceAmount;
   const balanceAmount = Number(currentBalance) - Number(checkAmount);
   const date = new Date();
   date.setHours(0, 0, 0, 0);
-  console.log(party, currentBalance, date, invoices, checkAmount);
   await Report.create({
+    Items: itemList,
     party,
     debit: 0,
     credit: checkAmount,
-    date,
+    date: checkDate,
   });
   await Invoice.findByIdAndUpdate(invoice, {
     balanceAmount,

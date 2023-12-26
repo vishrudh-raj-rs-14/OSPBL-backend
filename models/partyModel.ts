@@ -11,11 +11,6 @@ const partySchema = new mongoose.Schema({
     type: String,
     required: [true, "Please enter your gstNo"],
     unique: true,
-    // match: [
-    //   // eslint-disable-next-line no-control-regex
-    //   /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-    //   "Please enter a valid gstNo address",
-    // ],
   },
   bankDetails: {
     type: {

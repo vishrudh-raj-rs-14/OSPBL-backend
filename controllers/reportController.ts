@@ -31,7 +31,7 @@ const getReport = expressAsyncHandler(async (req, res) => {
   const startDateTime = new Date(String(startDate));
   startDateTime.setHours(0, 0, 0, 0);
   const endDateTime = new Date(String(endDate));
-  endDateTime.setHours(0, 0, 0, 0);
+  endDateTime.setHours(23, 59, 59, 999);
 
   const report = await Report.find({
     party: new mongoose.Types.ObjectId(partyId),
@@ -53,7 +53,25 @@ const getReport = expressAsyncHandler(async (req, res) => {
       },
     },
   ];
+  const pipelineFinal = [
+    {
+      $match: {
+        party: new mongoose.Types.ObjectId(partyId),
+        date: { $gte: startDateTime, $lte: endDateTime },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalDebitFinal: { $sum: "$debit" },
+        totalCreditFinal: { $sum: "$credit" },
+      },
+    },
+  ];
+  const resultFinal = await Report.aggregate(pipelineFinal);
+
   let initialBalanceAmount;
+  let finalBalanceAmount;
   const result = await Report.aggregate(pipeline);
   if (result.length > 0) {
     const { totalDebit, totalCredit } = result[0];
@@ -63,12 +81,20 @@ const getReport = expressAsyncHandler(async (req, res) => {
     initialBalanceAmount = 0;
     console.log(initialBalanceAmount);
   }
-
+  if (resultFinal.length > 0) {
+    const { totalDebitFinal, totalCreditFinal } = resultFinal[0];
+    finalBalanceAmount =
+      initialBalanceAmount + totalDebitFinal - totalCreditFinal;
+    console.log(totalDebitFinal, totalCreditFinal, finalBalanceAmount);
+  } else {
+    finalBalanceAmount = initialBalanceAmount;
+  }
   res.status(200).json({
     status: "success",
     report,
     initialBalanceAmount,
     party: partyNew,
+    finalBalanceAmount,
   });
 });
 
