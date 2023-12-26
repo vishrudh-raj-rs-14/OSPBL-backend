@@ -20,6 +20,21 @@ const getInvoiceForAccountant = expressAsyncHandler(async (req, res) => {
   });
 });
 
+const getAllPayments = expressAsyncHandler(async (req, res) => {
+  const payments = await Accountant.find({}).populate({
+    path: "invoice",
+    populate: {
+      path: "soldBy",
+      select: "partyName",
+    },
+  });
+
+  res.status(200).json({
+    status: "success",
+    payments,
+  });
+});
+
 const createPayment = expressAsyncHandler(async (req, res) => {
   const { invoice, checkID, checkAmount, checkDate } = req.body;
   if (
@@ -74,4 +89,4 @@ const createPayment = expressAsyncHandler(async (req, res) => {
   });
 });
 
-export { createPayment, getInvoiceForAccountant };
+export { createPayment, getInvoiceForAccountant, getAllPayments };
