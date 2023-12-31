@@ -42,7 +42,7 @@ const getReport = expressAsyncHandler(async (req, res) => {
     {
       $match: {
         party: new mongoose.Types.ObjectId(partyId),
-        date: { $lte: startDateTime },
+        date: { $lt: startDateTime },
       },
     },
     {
