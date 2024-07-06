@@ -12,6 +12,7 @@ import weightsRouter from "./routes/weightsRouter";
 import voucherRouter from "./routes/voucherRouter";
 import accountantRouter from "./routes/accountantRouter";
 import reportRouter from "./routes/reportRouter";
+import gradeCheckRouter from "./routes/gradeCheckRoutes";
 import cors from "cors";
 import path from "path";
 dotenv.config();
@@ -38,6 +39,7 @@ app.use("/api/weights", weightsRouter);
 app.use("/api/vouchers", voucherRouter);
 app.use("/api/payments", accountantRouter);
 app.use("/api/report", reportRouter);
+app.use("/api/gradeCheck", gradeCheckRouter);
 
 app.use("/test", protect, restricTo("ADMIN"), (req, res) => {
   res.status(200).json({

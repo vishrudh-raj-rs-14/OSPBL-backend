@@ -5,6 +5,8 @@ import Voucher from "../models/voucherModel";
 import Party from "../models/partyModel";
 import Report from "../models/reportModel";
 import mongoose from "mongoose";
+import Product from "../models/productModel";
+
 const getInvoiceForAccountant = expressAsyncHandler(async (req, res) => {
   const invoice = await Invoice.find({
     balanceAmount: { $gt: 0 },
@@ -17,6 +19,31 @@ const getInvoiceForAccountant = expressAsyncHandler(async (req, res) => {
   res.status(200).json({
     status: "success",
     invoice,
+  });
+});
+
+const getInvoice = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const invoice = await Invoice.findById(id).populate("soldBy");
+
+  res.status(200).json({
+    status: "success",
+    invoice,
+  });
+});
+
+const getAllInvoices = expressAsyncHandler(async (req, res) => {
+  console.log("here");
+  const invoices = await Invoice.find({})
+    .sort({
+      date: -1,
+    })
+    .populate("soldBy", "partyName");
+  console.log("here");
+
+  res.status(200).json({
+    status: "success",
+    invoice: invoices,
   });
 });
 
@@ -59,7 +86,10 @@ const createPayment = expressAsyncHandler(async (req, res) => {
     return;
   }
   const Items = invoiceTemp.Items;
-  const itemList = Items.map((item: { item: string }) => item.item);
+  const itemListTemp = Items.map(async (item) => {
+    // console.log(item);
+    return (await Product.findById(item.item))?.name});
+  const itemList = await Promise.all(itemListTemp) as string[];
   const party = await Party.findById(invoiceTemp?.soldBy).select("partyName");
   const invoices = await Invoice.find({ soldBy: invoiceTemp?.soldBy });
   const currentBalance = invoiceTemp.balanceAmount;
@@ -89,4 +119,10 @@ const createPayment = expressAsyncHandler(async (req, res) => {
   });
 });
 
-export { createPayment, getInvoiceForAccountant, getAllPayments };
+export {
+  createPayment,
+  getInvoiceForAccountant,
+  getAllPayments,
+  getAllInvoices,
+  getInvoice,
+};

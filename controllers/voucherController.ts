@@ -4,6 +4,8 @@ import Report from "../models/reportModel";
 import Invoice from "../models/invoiceModel";
 import Product from "../models/productModel";
 import TimeOffice from "../models/timeOfficeModal";
+import path from 'path';
+
 
 const getAllVouchers = expressAsyncHandler(async (req, res) => {
   const filter: any = {};
@@ -30,6 +32,40 @@ const getAllVouchers = expressAsyncHandler(async (req, res) => {
     vouchers,
   });
 });
+
+const getFile = expressAsyncHandler(async (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), filename);
+  console.log(filePath)
+  
+    // Check if the file exists
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.log("-----------------");
+        console.log(err);
+        res.status(404).send('File not found');
+      }
+    });
+  })
+
+const getVoucher = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({
+      status: "fail",
+      message: "id not provided",
+    });
+    return;
+  }
+  const voucher = await Voucher.findById(id).populate("party").populate({
+    path: 'Items.item',  // Populate the item field inside Items array
+    model: 'Product',
+  })
+  res.status(200).json({
+    status: "success",
+    voucher,
+  });
+})
 
 const getVouchersofDay = expressAsyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 30;
@@ -59,7 +95,6 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
     .sort({ date: -1 })
     .populate("party");
 
-  console.log("-------------------");
   console.log(voucher);
   voucher = voucher.filter((voucher: any) => {
     return vehiclesIn.find((vehicleIn: any) => {
@@ -230,4 +265,6 @@ export {
   deleteVoucher,
   getVouchersofDay,
   vehicleLeft,
+  getVoucher,
+  getFile
 };

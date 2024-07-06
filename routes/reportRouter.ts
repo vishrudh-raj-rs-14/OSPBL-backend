@@ -5,7 +5,7 @@ const reportRouter = express.Router();
 
 reportRouter.get(
   "/:partyId",
-  //  protect, restricTo("ADMIN"),
+   protect, restricTo("ADMIN"),
   getReport
 );
 

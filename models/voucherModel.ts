@@ -1,11 +1,10 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const voucherSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now(),
   },
-
   party: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Party",
@@ -16,26 +15,28 @@ const voucherSchema = new mongoose.Schema({
     required: [true, "Please enter your vehicleNumber"],
     maxLength: [30, "Your vehicleNumber cannot exceed 30 characters"],
   },
+  
+  report:{
+    type:"String"
+  },
   Items: [
     {
       item: {
-        type: String,
-        // ref: "Product",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
         required: [true, "Please select a product"],
       },
-
       weight: {
         type: Number,
         required: [true, "Please enter the weight"],
       },
-      images: [
-        {
-          type: String,
-        },
-      ],
-      loss: {
+      remarks:{
         type: String,
-        default: "0%",
+        default: ""
+      },
+      loss: {
+        type: Number,
+        default: 0,
       },
     },
   ],

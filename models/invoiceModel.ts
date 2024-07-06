@@ -22,16 +22,23 @@ const invoiceSchema = new mongoose.Schema({
   balanceAmount: {
     type: Number,
   },
+  report:{
+    type:"String"
+  },
   Items: [
     {
       item: {
-        type: String,
-        // ref: "Product",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
         required: [true, "Please select a product"],
       },
       netPrice: {
         type: Number,
         required: [true, "Please enter the price amount"],
+      },
+      remarks:{
+        type: String,
+        default: ""
       },
       unitPrice: {
         type: Number,
@@ -41,11 +48,6 @@ const invoiceSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Please enter the weight"],
       },
-      images: [
-        {
-          type: String,
-        },
-      ],
       loss: {
         type: String,
         default: "0%",

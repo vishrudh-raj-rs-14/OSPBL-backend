@@ -52,19 +52,11 @@ const register = expressAsyncHandler(async (req, res) => {
   if (process.env.ENV != "DEV") {
     user.password = "";
   }
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
-    expiresIn: "30d",
+
+  res.status(201).json({
+    status: "success",
+    user,
   });
-  res
-    .status(201)
-    .cookie("ospbl", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV != "DEV",
-    })
-    .json({
-      status: "success",
-      user,
-    });
 });
 
 const logout = expressAsyncHandler(async (req, res) => {
@@ -114,4 +106,36 @@ const restricTo = (...roles: string[]) => {
   };
 };
 
-export { login, register, logout, protect, restricTo };
+const getAllUsers = expressAsyncHandler(async (req, res) => {
+  const users = await User.find({});
+  res.status(200).json({
+    status: "success",
+    users,
+  });
+});
+
+const deleteUser = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userCopy = await User.findById(id);
+  if (!userCopy) {
+    res.status(404).json({
+      status: "fail",
+      message: "User not found",
+    });
+    return;
+  }
+  if (userCopy.role == "ADMIN") {
+    res.status(400).json({
+      status: "fail",
+      message: "Cannot delete admin",
+    });
+    return;
+  }
+  const user = await User.findByIdAndDelete(id);
+  res.status(200).json({
+    status: "success",
+    user,
+  });
+});
+
+export { login, register, logout, protect, restricTo, getAllUsers, deleteUser };

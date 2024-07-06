@@ -4,6 +4,8 @@ import {
   createVoucher,
   deleteVoucher,
   getAllVouchers,
+  getFile,
+  getVoucher,
   getVouchersofDay,
   vehicleLeft,
 } from "../controllers/voucherController";
@@ -16,7 +18,14 @@ voucherRouter.get(
   restricTo("ADMIN", "GRADE_CHECKER", "SECURITY"),
   getVouchersofDay
 );
+voucherRouter.get('/get-pdf/:filename', protect, restricTo("ADMIN") , getFile);
 voucherRouter.get("/all", protect, restricTo("ADMIN"), getAllVouchers);
+voucherRouter.get(
+  "/:id",
+  protect,
+  restricTo("ADMIN"),
+  getVoucher
+);
 voucherRouter.post(
   "/",
   protect,
