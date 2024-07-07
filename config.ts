@@ -1,3 +1,4 @@
-const BACKEND_URL = "http://localhost:3000/api";
+const CGST = 5;
+const SGST = 5;
 
-export { BACKEND_URL };
+export { CGST, SGST };
