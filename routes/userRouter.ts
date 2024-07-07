@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   deleteUser,
   getAllUsers,
@@ -7,15 +7,15 @@ import {
   protect,
   register,
   restricTo,
-} from "../controllers/userController";
+} from '../controllers/userController';
 
 const router = express.Router();
 
-router.get("/", protect, restricTo("ADMIN"), getAllUsers);
-router.delete("/:id", protect, restricTo("ADMIN"), deleteUser);
+router.get('/', protect, restricTo('ADMIN'), getAllUsers);
+router.delete('/:id', protect, restricTo('ADMIN'), deleteUser);
 
-router.post("/login", login);
-router.post("/register", protect, restricTo("ADMIN"), register);
-router.post("/logout", logout);
+router.post('/login', login);
+router.post('/register', protect, restricTo('ADMIN'), register);
+router.post('/logout', logout);
 
 export default router;

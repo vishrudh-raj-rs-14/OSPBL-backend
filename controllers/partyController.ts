@@ -1,27 +1,27 @@
-import Party from "../models/partyModel";
-import expressAsyncHandler from "express-async-handler";
-import Product from "../models/productModel";
-import TimeOffice from "../models/timeOfficeModal";
+import Party from '../models/partyModel';
+import expressAsyncHandler from 'express-async-handler';
+import Product from '../models/productModel';
+import TimeOffice from '../models/timeOfficeModal';
 
 const getAllParties = expressAsyncHandler(async (req, res) => {
   const { partyName, gstNo, mobileNo } = req.query;
   const filter: any = {};
 
   if (partyName) {
-    filter.partyName = { $regex: partyName, $options: "i" };
+    filter.partyName = { $regex: partyName, $options: 'i' };
   }
 
   if (gstNo) {
-    filter.gstNo = { $regex: gstNo, $options: "i" };
+    filter.gstNo = { $regex: gstNo, $options: 'i' };
   }
 
   if (mobileNo) {
-    filter.mobileNo = { $regex: mobileNo, $options: "i" };
+    filter.mobileNo = { $regex: mobileNo, $options: 'i' };
   }
 
   const parties = await Party.find(filter);
   res.status(200).json({
-    status: "success",
+    status: 'success',
     parties,
   });
 });
@@ -29,8 +29,8 @@ const getAllParties = expressAsyncHandler(async (req, res) => {
 const getPartybyId = expressAsyncHandler(async (req, res) => {
   if (!req.params.id) {
     res.status(400).json({
-      status: "fail",
-      message: "Party id not provided",
+      status: 'fail',
+      message: 'Party id not provided',
     });
     return;
   }
@@ -38,13 +38,13 @@ const getPartybyId = expressAsyncHandler(async (req, res) => {
   const party = await Party.findById(req.params.id);
   if (!party) {
     res.status(404).json({
-      status: "fail",
-      message: "Party not found",
+      status: 'fail',
+      message: 'Party not found',
     });
     return;
   }
   res.status(200).json({
-    status: "success",
+    status: 'success',
     party,
   });
 });
@@ -59,7 +59,7 @@ const createParty = expressAsyncHandler(async (req, res) => {
     bankDetails,
   });
   res.status(201).json({
-    status: "success",
+    status: 'success',
     party,
   });
 });
@@ -67,8 +67,8 @@ const createParty = expressAsyncHandler(async (req, res) => {
 const updateParty = expressAsyncHandler(async (req, res) => {
   if (!req.params.id) {
     res.status(400).json({
-      status: "fail",
-      message: "Party id not provided",
+      status: 'fail',
+      message: 'Party id not provided',
     });
     return;
   }
@@ -79,7 +79,7 @@ const updateParty = expressAsyncHandler(async (req, res) => {
     { new: true, runValidators: true }
   );
   res.status(200).json({
-    status: "success",
+    status: 'success',
     party,
   });
 });
@@ -87,8 +87,8 @@ const updateParty = expressAsyncHandler(async (req, res) => {
 const deleteParty = expressAsyncHandler(async (req, res) => {
   if (!req.params.id) {
     res.status(400).json({
-      status: "fail",
-      message: "Party id not provided",
+      status: 'fail',
+      message: 'Party id not provided',
     });
     return;
   }
@@ -106,7 +106,7 @@ const deleteParty = expressAsyncHandler(async (req, res) => {
   await TimeOffice.deleteMany({ party: req.params.id });
   const party = await Party.findByIdAndDelete(req.params.id);
   res.status(200).json({
-    status: "success",
+    status: 'success',
     party,
   });
 });
