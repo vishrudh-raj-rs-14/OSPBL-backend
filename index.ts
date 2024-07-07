@@ -26,7 +26,12 @@ const app =  express();
 // };
 
 // app.use(cors(corsOptions));
-app.options('*', cors());
+const corsOptions = {
+  origin: ['http://localhost:5173', "https://ospbl-frontend-test.vercel.app"],
+  credentials: true,
+
+}
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
