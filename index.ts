@@ -24,7 +24,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:5173', process.env.FRONTEND_URL as string],
+    origin: [
+      'https://ospbl-frontend-test.vercel.app',
+      process.env.FRONTEND_URL as string,
+    ],
     credentials: true,
   })
 );
