@@ -29,7 +29,7 @@ app.use(
   })
 );
 
-const port = process.env.PORT || 4000;
+const port = 8080 || process.env.PORT || 8080;
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/api/users", userRouter);
 app.use("/api/parties", partyRouter);
