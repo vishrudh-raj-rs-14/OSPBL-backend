@@ -32,9 +32,10 @@ const processImages = expressAsyncHandler(async (req: any, res, next) => {
   //     const fileName = `weight-${Date.now()}-${i}.jpg`;
   //     await sharp(processed[i].buffer)
   //       .resize(500, 500)
-  //       .toFormat("jpeg")
+  //       .toFormat('jpeg')
   //       .jpeg({ quality: 90 })
   //       .toFile(`public/img/weightBridge/${fileName}`);
+
   //     fileNames[i] = fileName;
   //   })
   // );
