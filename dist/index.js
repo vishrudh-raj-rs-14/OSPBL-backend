@@ -23,13 +23,13 @@ const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
 (0, connectDatabase_1.default)('OSPBL');
 const app = (0, express_1.default)();
-const corsOptions = {
-    origin: '*', // Adjust as needed
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-};
-app.use((0, cors_1.default)(corsOptions));
-app.options('*', (0, cors_1.default)(corsOptions));
+// const corsOptions = {
+//   origin: '*', // Adjust as needed
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// };
+// app.use(cors(corsOptions));
+app.options('*', (0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
