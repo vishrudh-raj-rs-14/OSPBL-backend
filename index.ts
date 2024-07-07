@@ -22,13 +22,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-const corsOptions = {
-  origin: '*', // Adjust as needed
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
 
-app.use(cors(corsOptions));
+
+app.options("*", cors())
 
 const port = process.env.PORT || 3000;
 app.use('/public', express.static(path.join(__dirname, 'public')));
