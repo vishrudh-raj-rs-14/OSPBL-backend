@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const invoiceSchema = new mongoose.Schema({
   date: {
@@ -7,60 +7,61 @@ const invoiceSchema = new mongoose.Schema({
   },
   totalPurchase: {
     type: Number,
-    required: [true, "Please enter your totalPurchase"],
+    required: [true, 'Please enter your totalPurchase'],
   },
   soldBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Party",
-    required: [true, "Please select a party"],
+    ref: 'Party',
+    required: [true, 'Please select a party'],
   },
   vehicleNumber: {
     type: String,
-    required: [true, "Please enter your vehicleNumber"],
-    maxLength: [30, "Your vehicleNumber cannot exceed 30 characters"],
+    required: [true, 'Please enter your vehicleNumber'],
+    maxLength: [30, 'Your vehicleNumber cannot exceed 30 characters'],
   },
   balanceAmount: {
     type: Number,
   },
-  report:{
-    type:"String"
+
+  report: {
+    type: 'String',
   },
   Items: [
     {
       item: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        required: [true, "Please select a product"],
+        ref: 'Product',
+        required: [true, 'Please select a product'],
       },
       netPrice: {
         type: Number,
-        required: [true, "Please enter the price amount"],
+        required: [true, 'Please enter the price amount'],
       },
-      remarks:{
+      remarks: {
         type: String,
-        default: ""
+        default: '',
       },
       unitPrice: {
         type: Number,
-        required: [true, "Please enter the unit amount"],
+        required: [true, 'Please enter the unit amount'],
       },
       weight: {
         type: Number,
-        required: [true, "Please enter the weight"],
+        required: [true, 'Please enter the weight'],
       },
       loss: {
-        type: String,
-        default: "0%",
+        type: Number,
+        default: 0,
       },
     },
   ],
 });
 
-invoiceSchema.pre("save", function (next) {
+invoiceSchema.pre('save', function (next) {
   this.vehicleNumber = this.vehicleNumber.toUpperCase();
   next();
 });
 
-const Invoice = mongoose.model("Invoice", invoiceSchema);
+const Invoice = mongoose.model('Invoice', invoiceSchema);
 
 export default Invoice;
