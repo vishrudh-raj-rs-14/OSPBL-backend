@@ -15,7 +15,7 @@ router.get('/', protect, restricTo('ADMIN'), getAllUsers);
 router.delete('/:id', protect, restricTo('ADMIN'), deleteUser);
 
 router.post('/login', login);
-router.post('/register', protect, restricTo('ADMIN'), register);
+router.post('/register', register);
 router.post('/logout', logout);
 
 export default router;

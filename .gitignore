@@ -3,3 +3,4 @@ node_modules
 *.pdf
 .vercel
 build
+.env

@@ -45,12 +45,12 @@ const login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 
 exports.login = login;
 const register = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password, role, mobileNo } = req.body;
-    if (role == "ADMIN") {
-        res.status(400).json({
-            status: "fail",
-            message: "Cannot register as admin",
-        });
-    }
+    // if (role == "ADMIN") {
+    //   res.status(400).json({
+    //     status: "fail",
+    //     message: "Cannot register as admin",
+    //   });
+    // }
     const checkExists = yield userModel_1.default.findOne({ email });
     if (checkExists) {
         console.log(checkExists);
