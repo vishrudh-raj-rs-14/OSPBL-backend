@@ -80,7 +80,7 @@ const getVoucher = (0, express_async_handler_1.default)((req, res) => __awaiter(
         return;
     }
     const voucher = yield voucherModel_1.default.findById(id).populate("party").populate({
-        path: 'Items.item',
+        path: 'Items.item', // Populate the item field inside Items array
         model: 'Product',
     });
     res.status(200).json({

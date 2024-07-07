@@ -23,22 +23,16 @@ const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
 (0, connectDatabase_1.default)('OSPBL');
 const app = (0, express_1.default)();
+const corsOptions = {
+    origin: '*', // Adjust as needed
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use((0, cors_1.default)(corsOptions));
+app.options('*', (0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
-app.use((0, cors_1.default)({
-    origin: [
-        'https://ospbl-frontend-test.vercel.app',
-        process.env.FRONTEND_URL,
-    ],
-    credentials: true,
-}));
-app.options('*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.sendStatus(204); // No Content
-});
 const port = process.env.PORT || 3000;
 app.use('/public', express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use('/api/users', userRouter_1.default);

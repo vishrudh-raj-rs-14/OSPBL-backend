@@ -18,7 +18,7 @@ import path from 'path';
 dotenv.config();
 
 connectDatabase('OSPBL');
-const app = express();
+const app =  express();
 const corsOptions = {
   origin: '*', // Adjust as needed
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
