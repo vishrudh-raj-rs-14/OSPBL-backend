@@ -3,7 +3,6 @@ import expressAsyncHandler from "express-async-handler";
 import multer from "multer";
 import { Request, Response } from "express";
 
-import sharp from "sharp";
 
 const multerStorage = multer.memoryStorage();
 
@@ -26,22 +25,22 @@ const upload = multer({
 const uploadPhotos = upload.array("images", 2);
 
 const processImages = expressAsyncHandler(async (req: any, res, next) => {
-  if (!req.files) return next();
-  let fileNames: any = [null, null];
-  let processed: any = req.files;
-  await Promise.all(
-    processed.map(async (ele: any, i: number) => {
-      const fileName = `weight-${Date.now()}-${i}.jpg`;
-      await sharp(processed[i].buffer)
-        .resize(500, 500)
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/weightBridge/${fileName}`);
+  // if (!req.files) return next();
+  // let fileNames: any = [null, null];
+  // let processed: any = req.files;
+  // await Promise.all(
+  //   processed.map(async (ele: any, i: number) => {
+  //     const fileName = `weight-${Date.now()}-${i}.jpg`;
+  //     await sharp(processed[i].buffer)
+  //       .resize(500, 500)
+  //       .toFormat("jpeg")
+  //       .jpeg({ quality: 90 })
+  //       .toFile(`public/img/weightBridge/${fileName}`);
 
-      fileNames[i] = fileName;
-    })
-  );
-  req.body.fileNames = fileNames;
+  //     fileNames[i] = fileName;
+  //   })
+  // );
+  // req.body.fileNames = fileNames;
   next();
 });
 
