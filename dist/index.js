@@ -33,6 +33,12 @@ app.use((0, cors_1.default)({
     ],
     credentials: true,
 }));
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.sendStatus(204); // No Content
+});
 const port = process.env.PORT || 3000;
 app.use('/public', express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use('/api/users', userRouter_1.default);

@@ -26,6 +26,7 @@ app.use(
   cors({
     origin: [
       'https://ospbl-frontend-test.vercel.app',
+      'https://localhost:5173',
       process.env.FRONTEND_URL as string,
     ],
     credentials: true,
