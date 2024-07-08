@@ -5,6 +5,7 @@ import TimeOffice from "../models/timeOfficeModal";
 import Product from "../models/productModel";
 import Report from "../models/reportModel";
 import multer from "multer";
+import path from "path";
 import fs from 'fs'
 
 const multerStorage = multer.memoryStorage();
@@ -30,8 +31,7 @@ const uploadPDF = upload.single('pdfFile');
 const processPDF = expressAsyncHandler(async (req: any, res, next) => {
     if (!req.file) return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
-    const savePath = `/var/task/dist/pdf/${pdfFileName}`;
-    console.log(__dirname)
+    const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
   
   // Save the file
     fs.writeFile(savePath, req.file.buffer, (err) => {

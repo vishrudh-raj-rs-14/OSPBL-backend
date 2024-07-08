@@ -20,6 +20,7 @@ const timeOfficeModal_1 = __importDefault(require("../models/timeOfficeModal"));
 const productModel_1 = __importDefault(require("../models/productModel"));
 const reportModel_1 = __importDefault(require("../models/reportModel"));
 const multer_1 = __importDefault(require("multer"));
+const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const multerStorage = multer_1.default.memoryStorage();
 const multerFilter = (req, file, cb) => {
@@ -40,8 +41,7 @@ const processPDF = (0, express_async_handler_1.default)((req, res, next) => __aw
     if (!req.file)
         return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
-    const savePath = `/var/task/dist/pdf/${pdfFileName}`;
-    console.log(__dirname);
+    const savePath = path_1.default.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
     // Save the file
     fs_1.default.writeFile(savePath, req.file.buffer, (err) => {
         if (err) {
