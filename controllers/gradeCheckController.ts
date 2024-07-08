@@ -34,6 +34,7 @@ const uploadfile = expressAsyncHandler(async (req: any, res, next) => {
     const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`; 
     const blob = await put(fileName, file, {
         contentType: 'application/pdf',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
         access: 'public'
     })
     console.log(blob);
