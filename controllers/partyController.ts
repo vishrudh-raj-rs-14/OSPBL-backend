@@ -111,7 +111,7 @@ const deleteParty = expressAsyncHandler(async (req, res) => {
   // await TimeOffice.deleteMany({ party: req.params.id });
   const party = await Party.findByIdAndUpdate(
     req.params.id,
-    { removedParty: true },
+    { deletedParty: true },
     { new: true, runValidators: true }
   );
   res.status(200).json({

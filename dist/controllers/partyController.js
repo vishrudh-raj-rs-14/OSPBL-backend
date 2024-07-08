@@ -109,7 +109,7 @@ const deleteParty = (0, express_async_handler_1.default)((req, res) => __awaiter
     // });
     // await Promise.all(updatedProducts);
     // await TimeOffice.deleteMany({ party: req.params.id });
-    const party = yield partyModel_1.default.findByIdAndUpdate(req.params.id, { removedParty: true }, { new: true, runValidators: true });
+    const party = yield partyModel_1.default.findByIdAndUpdate(req.params.id, { deletedParty: true }, { new: true, runValidators: true });
     res.status(200).json({
         status: 'success',
         party,
