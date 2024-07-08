@@ -88,12 +88,9 @@ const protect = (0, express_async_handler_1.default)((req, res, next) => __await
         req.headers.authorization.startsWith("Bearer ")) {
         token = req.headers.authorization.split(" ")[1];
     }
-    if (req.cookies.ospbl) {
+    if (req.cookies.ospbl && req.cookies.ospbl != null && req.cookies.ospbl != "null") {
         token = req.cookies.ospbl;
     }
-    console.log("-------------------");
-    console.log(token, process.env.JWT_SECRET);
-    console.log("-------------------");
     if (!token) {
         res.status(401).json({
             status: "fail",
