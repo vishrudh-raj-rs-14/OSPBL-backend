@@ -84,7 +84,7 @@ const protect = expressAsyncHandler(async (req: any, res, next) => {
     token = req.cookies.ospbl;
   }
   console.log("-------------------")
-  console.log(JSON.stringify(req.cookies), process.env.JWT_SECRET )
+  console.log(token, process.env.JWT_SECRET )
   console.log("-------------------")
 
   if (!token) {
