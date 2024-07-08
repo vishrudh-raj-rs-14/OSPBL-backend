@@ -20,7 +20,6 @@ const userModel_1 = __importDefault(require("../models/userModel"));
 const login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const user = yield userModel_1.default.findOne({ email }).select("+password");
-    console.log(user, password);
     if (!user || !(yield bcrypt_1.default.compare(password, user.password))) {
         res.status(401).json({
             status: "fail",
@@ -35,7 +34,7 @@ const login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 
         .status(200)
         .cookie("ospbl", token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
     })
         .json({
         status: "success",
@@ -74,7 +73,7 @@ const logout = (0, express_async_handler_1.default)((req, res) => __awaiter(void
         .status(200)
         .cookie("ospbl", "", {
         httpOnly: true,
-        secure: false,
+        secure: true,
         expires: new Date(0),
     })
         .json({
@@ -91,7 +90,9 @@ const protect = (0, express_async_handler_1.default)((req, res, next) => __await
     if (req.cookies.ospbl) {
         token = req.cookies.ospbl;
     }
-    console.log(req.cookies);
+    console.log("-------------------");
+    console.log(req.cookies, process.env.JWT_SECRET);
+    console.log("-------------------");
     if (!token) {
         res.status(401).json({
             status: "fail",
