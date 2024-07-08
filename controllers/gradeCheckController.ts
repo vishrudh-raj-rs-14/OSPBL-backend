@@ -32,6 +32,7 @@ const processPDF = expressAsyncHandler(async (req: any, res, next) => {
     if (!req.file) return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
     const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
+    console.log(savePath, pdfFileName);
   
   // Save the file
     fs.writeFile(savePath, req.file.buffer, (err) => {
