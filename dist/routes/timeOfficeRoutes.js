@@ -7,13 +7,14 @@ const express_1 = __importDefault(require("express"));
 const timeOfficeController_1 = require("../controllers/timeOfficeController");
 const userController_1 = require("../controllers/userController");
 const timeOfficeRouter = express_1.default.Router();
-timeOfficeRouter.get("/", 
+timeOfficeRouter.get('/', 
 // protect,
 // restricTo("ADMIN", "SECURITY"),
 timeOfficeController_1.gettimeOfficeRecordsOfDay);
-timeOfficeRouter.get("/all", userController_1.protect, (0, userController_1.restricTo)("ADMIN"), timeOfficeController_1.getAlltimeOffices);
-timeOfficeRouter.get("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN"), timeOfficeController_1.gettimeOfficebyId);
-timeOfficeRouter.post("/", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "SECURITY"), timeOfficeController_1.createtimeOffice);
-timeOfficeRouter.put("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN"), timeOfficeController_1.updatetimeOffice);
-timeOfficeRouter.delete("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN"), timeOfficeController_1.deletetimeOffice);
+timeOfficeRouter.get('/all', userController_1.protect, (0, userController_1.restricTo)('ADMIN'), timeOfficeController_1.getAlltimeOffices);
+timeOfficeRouter.get('/today', userController_1.protect, (0, userController_1.restricTo)('ADMIN', 'SECURITY'), timeOfficeController_1.gettimeOfficeRecordsOfDay);
+timeOfficeRouter.get('/:id', userController_1.protect, (0, userController_1.restricTo)('ADMIN'), timeOfficeController_1.gettimeOfficebyId);
+timeOfficeRouter.post('/', userController_1.protect, (0, userController_1.restricTo)('ADMIN', 'SECURITY'), timeOfficeController_1.createtimeOffice);
+timeOfficeRouter.put('/:id', userController_1.protect, (0, userController_1.restricTo)('ADMIN'), timeOfficeController_1.updatetimeOffice);
+timeOfficeRouter.delete('/:id', userController_1.protect, (0, userController_1.restricTo)('ADMIN'), timeOfficeController_1.deletetimeOffice);
 exports.default = timeOfficeRouter;

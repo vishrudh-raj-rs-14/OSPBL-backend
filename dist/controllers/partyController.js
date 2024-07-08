@@ -15,8 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteParty = exports.updateParty = exports.createParty = exports.getPartybyId = exports.getAllParties = void 0;
 const partyModel_1 = __importDefault(require("../models/partyModel"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
-const productModel_1 = __importDefault(require("../models/productModel"));
-const timeOfficeModal_1 = __importDefault(require("../models/timeOfficeModal"));
 const getAllParties = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { partyName, gstNo, mobileNo } = req.query;
     const filter = {};
@@ -29,7 +27,7 @@ const getAllParties = (0, express_async_handler_1.default)((req, res) => __await
     if (mobileNo) {
         filter.mobileNo = { $regex: mobileNo, $options: 'i' };
     }
-    const parties = yield partyModel_1.default.find(filter);
+    const parties = yield partyModel_1.default.find(Object.assign(Object.assign({}, filter), { deletedParty: false }));
     res.status(200).json({
         status: 'success',
         parties,
@@ -97,15 +95,19 @@ const deleteParty = (0, express_async_handler_1.default)((req, res) => __awaiter
         });
         return;
     }
-    const products = yield productModel_1.default.find({
-        price: { $elemMatch: { party: req.params.id } },
-    });
-    const updatedProducts = products.map((product) => __awaiter(void 0, void 0, void 0, function* () {
-        yield productModel_1.default.findByIdAndUpdate(product._id, { $pull: { price: { party: req.params.id } } }, { new: true, runValidators: true });
-    }));
-    yield Promise.all(updatedProducts);
-    yield timeOfficeModal_1.default.deleteMany({ party: req.params.id });
-    const party = yield partyModel_1.default.findByIdAndDelete(req.params.id);
+    // const products = await Product.find({
+    //   price: { $elemMatch: { party: req.params.id } },
+    // });
+    // const updatedProducts = products.map(async (product) => {
+    //   await Product.findByIdAndUpdate(
+    //     product._id,
+    //     { $pull: { price: { party: req.params.id } } },
+    //     { new: true, runValidators: true }
+    //   );
+    // });
+    // await Promise.all(updatedProducts);
+    // await TimeOffice.deleteMany({ party: req.params.id });
+    const party = yield partyModel_1.default.findByIdAndUpdate(req.params.id, { removedParty: true }, { new: true, runValidators: true });
     res.status(200).json({
         status: 'success',
         party,
