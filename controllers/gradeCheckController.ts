@@ -29,37 +29,35 @@ const upload = multer({
 
 const uploadPDF = upload.single('pdfFile');
 
-const uploadfile = expressAsyncHandler(async (req: any, res, next) => {
-    const file = req.body || '';
-    const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`; 
-    const blob = await put(fileName, file, {
-        contentType: 'application/pdf',
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-        access: 'public'
-    })
-    console.log(blob);
-    res.status(200).json({
-        status: "success",
-        blob
-    })
-})
+// const uploadfile = expressAsyncHandler(async (req: any, res, next) => {
+//     console.log(req.file.buffer);
+//     console.log("-----------------")
+//     const file = req.file|| '';
+//     const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`; 
+//     console.log(file)
+//     console.log("-----------------")
+//     const blob = await put(fileName, req.file.buffer, {
+//         token: process.env.BLOB_READ_WRITE_TOKEN,
+//         access: 'public'
+//     })
+//     console.log(blob);
+//     res.status(200).json({
+//         status: "success",
+//         blob
+//     })
+// })
 
 const processPDF = expressAsyncHandler(async (req: any, res, next) => {
-    console.log("here", req.file," ---");
     if (!req.file) return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
-    const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
-  
-  // Save the file
-    fs.writeFile(savePath, req.file.buffer, (err) => {
-        console.log("here");
-        if (err) {
-        console.log(err);
-        return next(err);
-        }
+    // const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
+    const blob = await put(pdfFileName, req.file.buffer, {
+                token: process.env.BLOB_READ_WRITE_TOKEN,
+                access: 'public'
+            })
         req.body.pdfFileName = pdfFileName;
+        req.body.blob = blob;
         next();
-    })
 });
 
 const getGradeCheckData = expressAsyncHandler(async (req, res) => {
@@ -88,7 +86,7 @@ const getGradeCheckData = expressAsyncHandler(async (req, res) => {
 
 const addGradeCheckData = expressAsyncHandler(async (req, res) => {
 
-    const {timeOfficeEntry, pdfFileName} = req.body;
+    const {timeOfficeEntry, pdfFileName, blob} = req.body;
     const weights = JSON.parse(req.body.weights);
     const toRecord = await TimeOffice.findById(timeOfficeEntry);
     const party = toRecord?.party;
@@ -173,6 +171,8 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
           party: party,
           vehicleNumber,
           report: pdfFileName,
+          reportUrl:blob.url,
+          downloadUrl:blob.downloadUrl,
           Items: Items.map((item: any) => {
             return {
                     weight: item.firstWeight-item.secondWeight,
@@ -191,4 +191,4 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
 
 })
 
-export {getGradeCheckData, addGradeCheckData, uploadPDF, processPDF, uploadfile}
+export {getGradeCheckData, addGradeCheckData, uploadPDF, processPDF}

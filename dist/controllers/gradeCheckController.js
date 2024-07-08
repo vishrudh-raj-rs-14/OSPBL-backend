@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadfile = exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
+exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const invoiceModel_1 = __importDefault(require("../models/invoiceModel"));
 const voucherModel_1 = __importDefault(require("../models/voucherModel"));
@@ -20,8 +20,6 @@ const timeOfficeModal_1 = __importDefault(require("../models/timeOfficeModal"));
 const productModel_1 = __importDefault(require("../models/productModel"));
 const reportModel_1 = __importDefault(require("../models/reportModel"));
 const multer_1 = __importDefault(require("multer"));
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
 const blob_1 = require("@vercel/blob");
 const multerStorage = multer_1.default.memoryStorage();
 const multerFilter = (req, file, cb) => {
@@ -38,37 +36,35 @@ const upload = (0, multer_1.default)({
 });
 const uploadPDF = upload.single('pdfFile');
 exports.uploadPDF = uploadPDF;
-const uploadfile = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const file = req.body || '';
-    const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
-    const blob = yield (0, blob_1.put)(fileName, file, {
-        contentType: 'application/pdf',
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-        access: 'public'
-    });
-    console.log(blob);
-    res.status(200).json({
-        status: "success",
-        blob
-    });
-}));
-exports.uploadfile = uploadfile;
+// const uploadfile = expressAsyncHandler(async (req: any, res, next) => {
+//     console.log(req.file.buffer);
+//     console.log("-----------------")
+//     const file = req.file|| '';
+//     const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`; 
+//     console.log(file)
+//     console.log("-----------------")
+//     const blob = await put(fileName, req.file.buffer, {
+//         token: process.env.BLOB_READ_WRITE_TOKEN,
+//         access: 'public'
+//     })
+//     console.log(blob);
+//     res.status(200).json({
+//         status: "success",
+//         blob
+//     })
+// })
 const processPDF = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("here", req.file, " ---");
     if (!req.file)
         return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
-    const savePath = path_1.default.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
-    // Save the file
-    fs_1.default.writeFile(savePath, req.file.buffer, (err) => {
-        console.log("here");
-        if (err) {
-            console.log(err);
-            return next(err);
-        }
-        req.body.pdfFileName = pdfFileName;
-        next();
+    // const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
+    const blob = yield (0, blob_1.put)(pdfFileName, req.file.buffer, {
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+        access: 'public'
     });
+    req.body.pdfFileName = pdfFileName;
+    req.body.blob = blob;
+    next();
 }));
 exports.processPDF = processPDF;
 const getGradeCheckData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,7 +88,7 @@ const getGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
 }));
 exports.getGradeCheckData = getGradeCheckData;
 const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { timeOfficeEntry, pdfFileName } = req.body;
+    const { timeOfficeEntry, pdfFileName, blob } = req.body;
     const weights = JSON.parse(req.body.weights);
     const toRecord = yield timeOfficeModal_1.default.findById(timeOfficeEntry);
     const party = toRecord === null || toRecord === void 0 ? void 0 : toRecord.party;
@@ -163,6 +159,8 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         party: party,
         vehicleNumber,
         report: pdfFileName,
+        reportUrl: blob.url,
+        downloadUrl: blob.downloadUrl,
         Items: Items.map((item) => {
             return {
                 weight: item.firstWeight - item.secondWeight,

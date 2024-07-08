@@ -23,6 +23,14 @@ const voucherSchema = new mongoose_1.default.Schema({
         type: "String",
         required: [true, "Please enter your report"],
     },
+    reportUrl: {
+        type: "String",
+        required: [true, "Please enter your report"],
+    },
+    downloadUrl: {
+        type: String,
+        required: [true, "Please enter your downloadUrl"],
+    },
     Items: [
         {
             item: {

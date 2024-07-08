@@ -5,7 +5,6 @@ type Error = {
 };
 
 const connectDatabase = async (database: string) => {
-  console.log(process.env.MONGODB_URI);
   try {
     const conn = await mongoose.connect(
       (process.env.MONGODB_URI as string)
