@@ -17,7 +17,8 @@ const voucherSchema = new mongoose.Schema({
   },
   
   report:{
-    type:"String"
+    type:"String",
+    required: [true, "Please enter your report"],
   },
   Items: [
     {

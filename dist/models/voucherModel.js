@@ -20,7 +20,8 @@ const voucherSchema = new mongoose_1.default.Schema({
         maxLength: [30, "Your vehicleNumber cannot exceed 30 characters"],
     },
     report: {
-        type: "String"
+        type: "String",
+        required: [true, "Please enter your report"],
     },
     Items: [
         {
