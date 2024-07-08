@@ -91,7 +91,7 @@ const protect = (0, express_async_handler_1.default)((req, res, next) => __await
         token = req.cookies.ospbl;
     }
     console.log("-------------------");
-    console.log(req.cookies, process.env.JWT_SECRET);
+    console.log(JSON.stringify(req.cookies), process.env.JWT_SECRET);
     console.log("-------------------");
     if (!token) {
         res.status(401).json({
