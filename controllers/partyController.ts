@@ -19,7 +19,12 @@ const getAllParties = expressAsyncHandler(async (req, res) => {
     filter.mobileNo = { $regex: mobileNo, $options: 'i' };
   }
 
-  const parties = await Party.find({ ...filter, deletedParty: false });
+  const parties = await Party.find({ ...filter, deletedParty:
+     {
+      $ne: true
+     } 
+    
+    });
   res.status(200).json({
     status: 'success',
     parties,

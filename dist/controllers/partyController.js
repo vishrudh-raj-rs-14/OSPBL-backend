@@ -27,7 +27,9 @@ const getAllParties = (0, express_async_handler_1.default)((req, res) => __await
     if (mobileNo) {
         filter.mobileNo = { $regex: mobileNo, $options: 'i' };
     }
-    const parties = yield partyModel_1.default.find(Object.assign(Object.assign({}, filter), { deletedParty: false }));
+    const parties = yield partyModel_1.default.find(Object.assign(Object.assign({}, filter), { deletedParty: {
+            $ne: true
+        } }));
     res.status(200).json({
         status: 'success',
         parties,
