@@ -31,6 +31,7 @@ const processPDF = expressAsyncHandler(async (req: any, res, next) => {
     if (!req.file) return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
     const savePath = `dist/pdf/${pdfFileName}`;
+    console.log(__dirname)
   
   // Save the file
     fs.writeFile(savePath, req.file.buffer, (err) => {
@@ -71,6 +72,7 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
 
     const {timeOfficeEntry, pdfFileName} = req.body;
     const weights = JSON.parse(req.body.weights);
+    console.log(__dirname)
     console.log(pdfFileName);
     const toRecord = await TimeOffice.findById(timeOfficeEntry);
     const party = toRecord?.party;

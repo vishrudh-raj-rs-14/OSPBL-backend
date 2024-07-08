@@ -41,6 +41,7 @@ const processPDF = (0, express_async_handler_1.default)((req, res, next) => __aw
         return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
     const savePath = `dist/pdf/${pdfFileName}`;
+    console.log(__dirname);
     // Save the file
     fs_1.default.writeFile(savePath, req.file.buffer, (err) => {
         if (err) {
@@ -75,6 +76,7 @@ exports.getGradeCheckData = getGradeCheckData;
 const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { timeOfficeEntry, pdfFileName } = req.body;
     const weights = JSON.parse(req.body.weights);
+    console.log(__dirname);
     console.log(pdfFileName);
     const toRecord = yield timeOfficeModal_1.default.findById(timeOfficeEntry);
     const party = toRecord === null || toRecord === void 0 ? void 0 : toRecord.party;
