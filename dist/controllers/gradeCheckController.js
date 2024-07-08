@@ -31,6 +31,7 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
+<<<<<<< HEAD
   };
 var __importDefault =
   (this && this.__importDefault) ||
@@ -53,6 +54,22 @@ const productModel_1 = __importDefault(require('../models/productModel'));
 const reportModel_1 = __importDefault(require('../models/reportModel'));
 const multer_1 = __importDefault(require('multer'));
 const blob_1 = require('@vercel/blob');
+=======
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteAllBlob = exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
+const express_async_handler_1 = __importDefault(require("express-async-handler"));
+const invoiceModel_1 = __importDefault(require("../models/invoiceModel"));
+const voucherModel_1 = __importDefault(require("../models/voucherModel"));
+const timeOfficeModal_1 = __importDefault(require("../models/timeOfficeModal"));
+const productModel_1 = __importDefault(require("../models/productModel"));
+const reportModel_1 = __importDefault(require("../models/reportModel"));
+const multer_1 = __importDefault(require("multer"));
+const blob_1 = require("@vercel/blob");
+>>>>>>> 79fb93e (blob delete)
 const multerStorage = multer_1.default.memoryStorage();
 const multerFilter = (req, file, cb) => {
   if (file && file.mimetype.startsWith('application/pdf')) {
@@ -99,8 +116,34 @@ const processPDF = (0, express_async_handler_1.default)((req, res, next) =>
   })
 );
 exports.processPDF = processPDF;
+<<<<<<< HEAD
 const getGradeCheckData = (0, express_async_handler_1.default)((req, res) =>
   __awaiter(void 0, void 0, void 0, function* () {
+=======
+function sortByUploadedAtDesc(array) {
+    array = array.map((ele) => {
+        return Object.assign(Object.assign({}, ele), { uploadedAt: new Date(ele.uploadedAt) });
+    });
+    return array.sort((a, b) => {
+        return new Date(b.uploadedAt) > new Date(a.uploadedAt);
+    });
+}
+const deleteAllBlob = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const listOfBlobs = yield (0, blob_1.list)({
+        limit: 1000,
+    });
+    const final = sortByUploadedAtDesc(listOfBlobs.blobs).slice(0, 10);
+    if (final.length > 0) {
+        yield (0, blob_1.del)(final.map((blob) => blob.url));
+    }
+    res.status(200).json({
+        status: "success",
+        final,
+    });
+}));
+exports.deleteAllBlob = deleteAllBlob;
+const getGradeCheckData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+>>>>>>> 79fb93e (blob delete)
     const limit = parseInt(req.query.limit) || 30;
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);

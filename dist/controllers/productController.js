@@ -55,7 +55,6 @@ const getProductbyId = (0, express_async_handler_1.default)((req, res) => __awai
 exports.getProductbyId = getProductbyId;
 const createProduct = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, category } = req.body;
-    console.log(name);
     const product = yield productModel_1.default.create({
         name,
         category,
@@ -119,7 +118,6 @@ const updateManyPrices = (0, express_async_handler_1.default)((req, res) => __aw
     const updatedPrices = prices.map((ele) => __awaiter(void 0, void 0, void 0, function* () {
         const { price } = ele;
         const productId = ele._id;
-        console.log(productId, price, "ASasd");
         const product = yield productModel_1.default.findById(productId);
         if (product) {
             product.price = price.filter((ele) => ele.party);

@@ -55,7 +55,6 @@ const getProductbyId = expressAsyncHandler(async (req, res) => {
 
 const createProduct = expressAsyncHandler(async (req, res) => {
   const { name, category } = req.body;
-  console.log(name);
   const product = await Product.create({
     name,
     category,
@@ -119,7 +118,6 @@ const updateManyPrices = expressAsyncHandler(async (req, res) => {
   const updatedPrices = prices.map(async (ele: any) => {
     const { price } = ele;
     const productId = ele._id;
-    console.log(productId, price, "ASasd");
     const product = await Product.findById(productId);
     if (product) {
       product.price = price.filter((ele: any) => ele.party);

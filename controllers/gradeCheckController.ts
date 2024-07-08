@@ -1,13 +1,13 @@
-import expressAsyncHandler from 'express-async-handler';
-import Invoice from '../models/invoiceModel';
-import Voucher from '../models/voucherModel';
-import TimeOffice from '../models/timeOfficeModal';
-import Product from '../models/productModel';
-import Report from '../models/reportModel';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { list, put } from '@vercel/blob';
+import expressAsyncHandler from "express-async-handler";
+import Invoice from "../models/invoiceModel";
+import Voucher from "../models/voucherModel";
+import TimeOffice from "../models/timeOfficeModal";
+import Product from "../models/productModel";
+import Report from "../models/reportModel";
+import multer from "multer";
+import path from "path";
+import fs from 'fs'
+import { del, list, put } from "@vercel/blob"; 
 
 const multerStorage = multer.memoryStorage();
 
@@ -48,16 +48,36 @@ const processPDF = expressAsyncHandler(async (req: any, res, next) => {
   next();
 });
 
-const getAllBlob = expressAsyncHandler(async (req, res) => {
-  const listOfBlobs = await list({
-    limit: 1000,
-  });
+function sortByUploadedAtDesc(array : any) {
+    array = array.map((ele:any)=>{
+        return {
+            ...ele,
+            uploadedAt: new Date(ele.uploadedAt)
+        }
+    
+    })
+    return array.sort((a:any, b:any) => {
+        return new Date(b.uploadedAt) > new Date(a.uploadedAt);
+    });
+}
 
-  res.status(200).json({
-    status: 'success',
-    listOfBlobs,
-  });
-});
+
+const deleteAllBlob = expressAsyncHandler(async (req, res) => {
+    const listOfBlobs = await list({
+        limit: 1000,
+      });
+
+    const final = sortByUploadedAtDesc(listOfBlobs.blobs).slice(0,10);
+
+    if (final.length > 0) {
+        await del(final.map((blob:any) => blob.url));
+      }
+
+    res.status(200).json({
+        status: "success",
+        final,
+        });
+})
 
 const getGradeCheckData = expressAsyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 30;
@@ -210,10 +230,7 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
   });
 });
 
-export {
-  getGradeCheckData,
-  addGradeCheckData,
-  uploadPDF,
-  processPDF,
-  getAllBlob,
-};
+
+
+
+export {getGradeCheckData, addGradeCheckData, uploadPDF, processPDF, deleteAllBlob}

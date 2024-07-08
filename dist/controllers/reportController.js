@@ -19,9 +19,7 @@ const reportModel_1 = __importDefault(require("../models/reportModel"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const getReport = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { startDate, endDate } = req.query;
-    console.log(startDate, endDate);
     const { partyId } = req.params;
-    console.log(partyId);
     const partyNew = yield partyModel_1.default.findById(partyId).select("partyName");
     if (!partyId || !startDate || !endDate) {
         res.status(400).json({
@@ -39,7 +37,6 @@ const getReport = (0, express_async_handler_1.default)((req, res) => __awaiter(v
         party: new mongoose_1.default.Types.ObjectId(partyId),
         date: { $gte: startDateTime, $lte: endDateTime },
     }).sort({ date: 1 });
-    console.log(report, "report");
     const pipeline = [
         {
             $match: {
@@ -77,17 +74,14 @@ const getReport = (0, express_async_handler_1.default)((req, res) => __awaiter(v
     if (result.length > 0) {
         const { totalDebit, totalCredit } = result[0];
         initialBalanceAmount = totalDebit - totalCredit;
-        console.log(totalDebit, totalCredit, initialBalanceAmount);
     }
     else {
         initialBalanceAmount = 0;
-        console.log(initialBalanceAmount);
     }
     if (resultFinal.length > 0) {
         const { totalDebitFinal, totalCreditFinal } = resultFinal[0];
         finalBalanceAmount =
             initialBalanceAmount + totalDebitFinal - totalCreditFinal;
-        console.log(totalDebitFinal, totalCreditFinal, finalBalanceAmount);
     }
     else {
         finalBalanceAmount = initialBalanceAmount;
