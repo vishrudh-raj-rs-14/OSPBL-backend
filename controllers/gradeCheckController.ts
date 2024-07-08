@@ -7,6 +7,7 @@ import Report from "../models/reportModel";
 import multer from "multer";
 import path from "path";
 import fs from 'fs'
+import { put } from "@vercel/blob"; 
 
 const multerStorage = multer.memoryStorage();
 
@@ -27,6 +28,20 @@ const upload = multer({
 });
 
 const uploadPDF = upload.single('pdfFile');
+
+const uploadfile = expressAsyncHandler(async (req: any, res, next) => {
+    const file = req.body || '';
+    const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`; 
+    const blob = await put(fileName, file, {
+        contentType: 'application/pdf',
+        access: 'public'
+    })
+    console.log(blob);
+    res.status(200).json({
+        status: "success",
+        blob
+    })
+})
 
 const processPDF = expressAsyncHandler(async (req: any, res, next) => {
     console.log("here", req.file," ---");
@@ -175,4 +190,4 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
 
 })
 
-export {getGradeCheckData, addGradeCheckData, uploadPDF, processPDF}
+export {getGradeCheckData, addGradeCheckData, uploadPDF, processPDF, uploadfile}

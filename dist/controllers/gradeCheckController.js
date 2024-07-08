@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
+exports.uploadfile = exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const invoiceModel_1 = __importDefault(require("../models/invoiceModel"));
 const voucherModel_1 = __importDefault(require("../models/voucherModel"));
@@ -22,6 +22,7 @@ const reportModel_1 = __importDefault(require("../models/reportModel"));
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+const blob_1 = require("@vercel/blob");
 const multerStorage = multer_1.default.memoryStorage();
 const multerFilter = (req, file, cb) => {
     if (file && file.mimetype.startsWith("application/pdf")) {
@@ -37,6 +38,20 @@ const upload = (0, multer_1.default)({
 });
 const uploadPDF = upload.single('pdfFile');
 exports.uploadPDF = uploadPDF;
+const uploadfile = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const file = req.body || '';
+    const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
+    const blob = yield (0, blob_1.put)(fileName, file, {
+        contentType: 'application/pdf',
+        access: 'public'
+    });
+    console.log(blob);
+    res.status(200).json({
+        status: "success",
+        blob
+    });
+}));
+exports.uploadfile = uploadfile;
 const processPDF = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("here", req.file, " ---");
     if (!req.file)
