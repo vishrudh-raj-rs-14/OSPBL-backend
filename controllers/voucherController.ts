@@ -21,7 +21,6 @@ const getAllVouchers = expressAsyncHandler(async (req, res) => {
   }
 
   const limit = parseInt(req.query.limit as string) || 30;
-  console.log(limit);
   let vouchers: any = Voucher.find(filter).sort({ date: -1 }).populate("party");
   if (limit != -1) {
     vouchers = vouchers.limit(limit);
@@ -36,13 +35,10 @@ const getAllVouchers = expressAsyncHandler(async (req, res) => {
 const getFile = expressAsyncHandler(async (req, res) => {
   const { filename } = req.params;
   const filePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), filename);
-  console.log(filePath)
   
     // Check if the file exists
     res.sendFile(filePath, (err) => {
       if (err) {
-        console.log("-----------------");
-        console.log(err);
         res.status(404).send('File not found');
       }
     });
@@ -84,7 +80,6 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
       $ne: false,
     },
   });
-  console.log(vehiclesIn);
 
   let voucher: any = await Voucher.find({
     date: {
@@ -95,7 +90,6 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
     .sort({ date: -1 })
     .populate("party");
 
-  console.log(voucher);
   voucher = voucher.filter((voucher: any) => {
     return vehiclesIn.find((vehicleIn: any) => {
       return (
@@ -114,7 +108,6 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
 
 const createVoucher = expressAsyncHandler(async (req, res) => {
   const { party, vehicleNumber, Items } = req.body;
-  console.log(req.body);
   const date = new Date();
   date.setHours(0, 0, 0, 0);
   if (!party || !vehicleNumber || !Items) {
@@ -175,11 +168,7 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
     const { unitPrice, netPrice, ...rest } = item;
     return rest;
   });
-  console.log(
-    Items.map((item: any) => {
-      return { ...item, item: item.item.name };
-    })
-  );
+  
   const voucher = await Voucher.create({
     party: party,
     vehicleNumber,
@@ -250,8 +239,6 @@ const vehicleLeft = expressAsyncHandler(async (req, res) => {
       new: true,
     }
   );
-  console.log(tempOfficeRecord);
-  console.log(timeOfficeRecord, "timeOfficeRecord");
 
   res.status(200).json({
     status: "success",

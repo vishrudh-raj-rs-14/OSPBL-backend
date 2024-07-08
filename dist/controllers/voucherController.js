@@ -44,7 +44,6 @@ const getAllVouchers = (0, express_async_handler_1.default)((req, res) => __awai
         filter.date = date;
     }
     const limit = parseInt(req.query.limit) || 30;
-    console.log(limit);
     let vouchers = voucherModel_1.default.find(filter).sort({ date: -1 }).populate("party");
     if (limit != -1) {
         vouchers = vouchers.limit(limit);
@@ -59,12 +58,9 @@ exports.getAllVouchers = getAllVouchers;
 const getFile = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { filename } = req.params;
     const filePath = path_1.default.join((process.env.PATH_TO_PDF || './public/pdf'), filename);
-    console.log(filePath);
     // Check if the file exists
     res.sendFile(filePath, (err) => {
         if (err) {
-            console.log("-----------------");
-            console.log(err);
             res.status(404).send('File not found');
         }
     });
@@ -104,7 +100,6 @@ const getVouchersofDay = (0, express_async_handler_1.default)((req, res) => __aw
             $ne: false,
         },
     });
-    console.log(vehiclesIn);
     let voucher = yield voucherModel_1.default.find({
         date: {
             $gte: startOfDay,
@@ -113,7 +108,6 @@ const getVouchersofDay = (0, express_async_handler_1.default)((req, res) => __aw
     })
         .sort({ date: -1 })
         .populate("party");
-    console.log(voucher);
     voucher = voucher.filter((voucher) => {
         return vehiclesIn.find((vehicleIn) => {
             return (vehicleIn.vehicleNumber.toLowerCase() ==
@@ -129,7 +123,6 @@ const getVouchersofDay = (0, express_async_handler_1.default)((req, res) => __aw
 exports.getVouchersofDay = getVouchersofDay;
 const createVoucher = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { party, vehicleNumber, Items } = req.body;
-    console.log(req.body);
     const date = new Date();
     date.setHours(0, 0, 0, 0);
     if (!party || !vehicleNumber || !Items) {
@@ -178,9 +171,6 @@ const createVoucher = (0, express_async_handler_1.default)((req, res) => __await
         const { unitPrice, netPrice } = item, rest = __rest(item, ["unitPrice", "netPrice"]);
         return rest;
     });
-    console.log(Items.map((item) => {
-        return Object.assign(Object.assign({}, item), { item: item.item.name });
-    }));
     const voucher = yield voucherModel_1.default.create({
         party: party,
         vehicleNumber,
@@ -244,8 +234,6 @@ const vehicleLeft = (0, express_async_handler_1.default)((req, res) => __awaiter
     }, {
         new: true,
     });
-    console.log(tempOfficeRecord);
-    console.log(timeOfficeRecord, "timeOfficeRecord");
     res.status(200).json({
         status: "success",
         timeOfficeRecord,
