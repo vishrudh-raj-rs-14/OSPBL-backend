@@ -9,4 +9,5 @@ const gradeCheckController_1 = require("../controllers/gradeCheckController");
 const router = express_1.default.Router();
 router.get("/", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "GRADE_CHECKER"), gradeCheckController_1.getGradeCheckData);
 router.post("/", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "GRADE_CHECKER"), gradeCheckController_1.uploadPDF, gradeCheckController_1.processPDF, gradeCheckController_1.addGradeCheckData);
+router.post("/report", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "GRADE_CHECKER"), gradeCheckController_1.uploadfile);
 exports.default = router;
