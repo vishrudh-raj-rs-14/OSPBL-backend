@@ -32,38 +32,26 @@ const multerFilter = (req, file, cb) => {
 };
 const upload = (0, multer_1.default)({
     storage: multerStorage,
+    limits: { fileSize: 1 * 1024 * 1024 },
     fileFilter: multerFilter,
 });
-const uploadPDF = upload.single('pdfFile');
+const uploadPDF = upload.array('pdfFile');
 exports.uploadPDF = uploadPDF;
-// const uploadfile = expressAsyncHandler(async (req: any, res, next) => {
-//     console.log(req.file.buffer);
-//     console.log("-----------------")
-//     const file = req.file|| '';
-//     const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`; 
-//     console.log(file)
-//     console.log("-----------------")
-//     const blob = await put(fileName, req.file.buffer, {
-//         token: process.env.BLOB_READ_WRITE_TOKEN,
-//         access: 'public'
-//     })
-//     console.log(blob);
-//     res.status(200).json({
-//         status: "success",
-//         blob
-//     })
-// })
 const processPDF = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.file)
+    if (!req.files || req.files.length == 0)
         return next();
-    const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
+    const files = req.files;
+    req.body.pdfFiles = [];
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const pdfFileName = `pdf-${Date.now()}-${req.user._id}-${i + 1}.pdf`;
+        const blob = yield (0, blob_1.put)(pdfFileName, file.buffer, {
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+            access: 'public'
+        });
+        req.body.pdfFiles.push({ pdfFileName, blob });
+    }
     // const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
-    const blob = yield (0, blob_1.put)(pdfFileName, req.file.buffer, {
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-        access: 'public'
-    });
-    req.body.pdfFileName = pdfFileName;
-    req.body.blob = blob;
     next();
 }));
 exports.processPDF = processPDF;
@@ -137,7 +125,6 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
     const invoice = yield invoiceModel_1.default.create({
         soldBy: party,
         vehicleNumber,
-        report: pdfFileName,
         Items: itemsWithPrice.map((item) => {
             return {
                 weight: item.firstWeight - item.secondWeight,
@@ -151,22 +138,18 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         totalPurchase,
         balanceAmount: totalPurchase,
     });
-    // const modifiedItems = Items.map((item: any) => {
-    //   const { unitPrice, netPrice, ...rest } = item;
-    //   return rest;
-    // });
     const voucher = yield voucherModel_1.default.create({
         party: party,
         vehicleNumber,
-        report: pdfFileName,
-        reportUrl: blob.url,
-        downloadUrl: blob.downloadUrl,
-        Items: Items.map((item) => {
+        Items: Items.map((item, index) => {
             return {
                 weight: item.firstWeight - item.secondWeight,
                 loss: item.loss,
                 item: item.materialId,
-                remarks: item.remarks
+                remarks: item.remarks,
+                report: req.body.pdfFiles[index].pdfFileName,
+                reportUrl: req.body.pdfFiles[index].blob.url,
+                downloadUrl: req.body.pdfFiles[index].blob.downloadUrl
             };
         }),
     });

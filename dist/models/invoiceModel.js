@@ -26,9 +26,6 @@ const invoiceSchema = new mongoose_1.default.Schema({
     balanceAmount: {
         type: Number,
     },
-    report: {
-        type: 'String',
-    },
     Items: [
         {
             item: {

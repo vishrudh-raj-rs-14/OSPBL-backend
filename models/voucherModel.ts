@@ -15,19 +15,6 @@ const voucherSchema = new mongoose.Schema({
     required: [true, "Please enter your vehicleNumber"],
     maxLength: [30, "Your vehicleNumber cannot exceed 30 characters"],
   },
-  
-  report:{
-    type:"String",
-    required: [true, "Please enter your report"],
-  },
-  reportUrl:{
-    type:"String",
-    required: [true, "Please enter your report"],
-  },
-  downloadUrl:{
-    type: String,
-    required: [true, "Please enter your downloadUrl"],
-  },
   Items: [
     {
       item: {
@@ -46,6 +33,17 @@ const voucherSchema = new mongoose.Schema({
       loss: {
         type: Number,
         default: 0,
+      },report:{
+        type:"String",
+        required: [true, "Please enter your report"],
+      },
+      reportUrl:{
+        type:"String",
+        required: [true, "Please enter your report"],
+      },
+      downloadUrl:{
+        type: String,
+        required: [true, "Please enter your downloadUrl"],
       },
     },
   ],

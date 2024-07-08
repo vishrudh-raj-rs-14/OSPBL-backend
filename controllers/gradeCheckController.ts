@@ -24,39 +24,27 @@ const multerFilter = (
 };
 const upload = multer({
   storage: multerStorage,
+  limits:{fileSize : 1 * 1024 * 1024},
   fileFilter: multerFilter as any,
 });
 
-const uploadPDF = upload.single('pdfFile');
-
-// const uploadfile = expressAsyncHandler(async (req: any, res, next) => {
-//     console.log(req.file.buffer);
-//     console.log("-----------------")
-//     const file = req.file|| '';
-//     const fileName = `pdf-${Date.now()}-${req.user._id}.pdf`; 
-//     console.log(file)
-//     console.log("-----------------")
-//     const blob = await put(fileName, req.file.buffer, {
-//         token: process.env.BLOB_READ_WRITE_TOKEN,
-//         access: 'public'
-//     })
-//     console.log(blob);
-//     res.status(200).json({
-//         status: "success",
-//         blob
-//     })
-// })
+const uploadPDF = upload.array('pdfFile');
 
 const processPDF = expressAsyncHandler(async (req: any, res, next) => {
-    if (!req.file) return next();
-    const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
+    if (!req.files || req.files.length==0) return next();
+    const files = req.files;
+    req.body.pdfFiles = [];
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const pdfFileName = `pdf-${Date.now()}-${req.user._id}-${i + 1}.pdf`;
+        const blob = await put(pdfFileName, file.buffer, {
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+            access: 'public'
+        });
+        req.body.pdfFiles.push({ pdfFileName, blob });
+    }
     // const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
-    const blob = await put(pdfFileName, req.file.buffer, {
-                token: process.env.BLOB_READ_WRITE_TOKEN,
-                access: 'public'
-            })
-        req.body.pdfFileName = pdfFileName;
-        req.body.blob = blob;
         next();
 });
 
@@ -148,7 +136,6 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
         const invoice = await Invoice.create({
           soldBy: party,
           vehicleNumber,
-          report: pdfFileName,
           Items: itemsWithPrice.map((item: any) => {
             return { 
                 weight: item.firstWeight-item.secondWeight,
@@ -162,23 +149,19 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
           totalPurchase,
           balanceAmount: totalPurchase,
         });
-        // const modifiedItems = Items.map((item: any) => {
-        //   const { unitPrice, netPrice, ...rest } = item;
-        //   return rest;
-        // });
-        
         const voucher = await Voucher.create({
           party: party,
           vehicleNumber,
-          report: pdfFileName,
-          reportUrl:blob.url,
-          downloadUrl:blob.downloadUrl,
-          Items: Items.map((item: any) => {
+          Items: Items.map((item: any, index:number) => {
             return {
                     weight: item.firstWeight-item.secondWeight,
                     loss:item.loss,
                     item: item.materialId,
-                    remarks: item.remarks
+                    remarks: item.remarks,
+                    report: req.body.pdfFiles[index].pdfFileName,
+                    reportUrl: req.body.pdfFiles[index].blob.url,
+                    downloadUrl: req.body.pdfFiles[index].blob.downloadUrl
+                    
             };
           }),
         });
