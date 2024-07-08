@@ -23,7 +23,7 @@ const login = expressAsyncHandler(async (req, res) => {
     .status(200)
     .cookie("ospbl", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
+      secure: false,
     })
     .json({
       status: "success",
@@ -64,7 +64,7 @@ const logout = expressAsyncHandler(async (req, res) => {
     .status(200)
     .cookie("ospbl", "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV != "DEV",
+      secure: false,
       expires: new Date(0),
     })
     .json({

@@ -35,7 +35,7 @@ const login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 
         .status(200)
         .cookie("ospbl", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
+        secure: false,
     })
         .json({
         status: "success",
@@ -74,7 +74,7 @@ const logout = (0, express_async_handler_1.default)((req, res) => __awaiter(void
         .status(200)
         .cookie("ospbl", "", {
         httpOnly: true,
-        secure: process.env.NODE_ENV != "DEV",
+        secure: false,
         expires: new Date(0),
     })
         .json({
