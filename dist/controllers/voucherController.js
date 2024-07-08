@@ -107,7 +107,11 @@ const getVouchersofDay = (0, express_async_handler_1.default)((req, res) => __aw
         },
     })
         .sort({ date: -1 })
-        .populate('party');
+        .populate('party')
+        .populate({
+        path: 'Items.item', // Populate the item field inside Items array
+        model: 'Product',
+    });
     voucher = voucher.filter((voucher) => {
         return vehiclesIn.find((vehicleIn) => {
             return (vehicleIn.vehicleNumber.toLowerCase() ==
