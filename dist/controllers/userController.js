@@ -91,6 +91,7 @@ const protect = (0, express_async_handler_1.default)((req, res, next) => __await
     if (req.cookies.ospbl) {
         token = req.cookies.ospbl;
     }
+    console.log(req.cookies);
     if (!token) {
         res.status(401).json({
             status: "fail",

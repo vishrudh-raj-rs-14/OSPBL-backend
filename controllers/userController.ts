@@ -83,6 +83,7 @@ const protect = expressAsyncHandler(async (req: any, res, next) => {
   if (req.cookies.ospbl) {
     token = req.cookies.ospbl;
   }
+  console.log(req.cookies)
   if (!token) {
     res.status(401).json({
       status: "fail",
