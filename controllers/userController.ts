@@ -22,7 +22,7 @@ const login = expressAsyncHandler(async (req, res) => {
     .status(200)
     .cookie("ospbl", token, {
       httpOnly: true,
-      secure: true,
+      sameSite: 'strict',
     })
     .json({
       status: "success",
@@ -63,7 +63,7 @@ const logout = expressAsyncHandler(async (req, res) => {
     .status(200)
     .cookie("ospbl", "", {
       httpOnly: true,
-      secure: true,
+      sameSite: 'strict',
       expires: new Date(0),
     })
     .json({
