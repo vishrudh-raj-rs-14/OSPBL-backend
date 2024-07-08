@@ -35,6 +35,7 @@ const processPDF = expressAsyncHandler(async (req: any, res, next) => {
   // Save the file
     fs.writeFile(savePath, req.file.buffer, (err) => {
         if (err) {
+        console.log(err);
         return next(err);
         }
         req.body.pdfFileName = pdfFileName;

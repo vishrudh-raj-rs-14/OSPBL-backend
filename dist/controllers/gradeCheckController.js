@@ -44,6 +44,7 @@ const processPDF = (0, express_async_handler_1.default)((req, res, next) => __aw
     // Save the file
     fs_1.default.writeFile(savePath, req.file.buffer, (err) => {
         if (err) {
+            console.log(err);
             return next(err);
         }
         req.body.pdfFileName = pdfFileName;
