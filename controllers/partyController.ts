@@ -19,7 +19,7 @@ const getAllParties = expressAsyncHandler(async (req, res) => {
     filter.mobileNo = { $regex: mobileNo, $options: 'i' };
   }
 
-  const parties = await Party.find(filter);
+  const parties = await Party.find({ ...filter, deletedParty: false });
   res.status(200).json({
     status: 'success',
     parties,
@@ -92,19 +92,23 @@ const deleteParty = expressAsyncHandler(async (req, res) => {
     });
     return;
   }
-  const products = await Product.find({
-    price: { $elemMatch: { party: req.params.id } },
-  });
-  const updatedProducts = products.map(async (product) => {
-    await Product.findByIdAndUpdate(
-      product._id,
-      { $pull: { price: { party: req.params.id } } },
-      { new: true, runValidators: true }
-    );
-  });
-  await Promise.all(updatedProducts);
-  await TimeOffice.deleteMany({ party: req.params.id });
-  const party = await Party.findByIdAndDelete(req.params.id);
+  // const products = await Product.find({
+  //   price: { $elemMatch: { party: req.params.id } },
+  // });
+  // const updatedProducts = products.map(async (product) => {
+  //   await Product.findByIdAndUpdate(
+  //     product._id,
+  //     { $pull: { price: { party: req.params.id } } },
+  //     { new: true, runValidators: true }
+  //   );
+  // });
+  // await Promise.all(updatedProducts);
+  // await TimeOffice.deleteMany({ party: req.params.id });
+  const party = await Party.findByIdAndUpdate(
+    req.params.id,
+    { removedParty: true },
+    { new: true, runValidators: true }
+  );
   res.status(200).json({
     status: 'success',
     party,

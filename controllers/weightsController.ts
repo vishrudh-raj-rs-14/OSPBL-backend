@@ -79,7 +79,7 @@ const createWeights = expressAsyncHandler(async (req: any, res: any) => {
 
 const getAllWeights = expressAsyncHandler(async (req, res) => {
   const startOfDay = new Date();
-  startOfDay.setUTCHours(0, 0, 0, 0);
+  startOfDay.setHours(0, 0, 0, 0);
 
   const weights = await Weights.find({
     measuredAt: {

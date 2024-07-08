@@ -1,11 +1,10 @@
-import Voucher from "../models/voucherModel";
-import expressAsyncHandler from "express-async-handler";
-import Report from "../models/reportModel";
-import Invoice from "../models/invoiceModel";
-import Product from "../models/productModel";
-import TimeOffice from "../models/timeOfficeModal";
+import Voucher from '../models/voucherModel';
+import expressAsyncHandler from 'express-async-handler';
+import Report from '../models/reportModel';
+import Invoice from '../models/invoiceModel';
+import Product from '../models/productModel';
+import TimeOffice from '../models/timeOfficeModal';
 import path from 'path';
-
 
 const getAllVouchers = expressAsyncHandler(async (req, res) => {
   const filter: any = {};
@@ -21,55 +20,58 @@ const getAllVouchers = expressAsyncHandler(async (req, res) => {
   }
 
   const limit = parseInt(req.query.limit as string) || 30;
-  let vouchers: any = Voucher.find(filter).sort({ date: -1 }).populate("party");
+  let vouchers: any = Voucher.find(filter).sort({ date: -1 }).populate('party');
   if (limit != -1) {
     vouchers = vouchers.limit(limit);
   }
   vouchers = await vouchers;
   res.status(200).json({
-    status: "success",
+    status: 'success',
     vouchers,
   });
 });
 
 const getFile = expressAsyncHandler(async (req, res) => {
   const { filename } = req.params;
-  const filePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), filename);
-  
-    // Check if the file exists
-    res.sendFile(filePath, (err) => {
-      if (err) {
-        res.status(404).send('File not found');
-      }
-    });
-  })
+  const filePath = path.join(
+    process.env.PATH_TO_PDF || './public/pdf',
+    filename
+  );
+
+  // Check if the file exists
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      res.status(404).send('File not found');
+    }
+  });
+});
 
 const getVoucher = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!id) {
     res.status(400).json({
-      status: "fail",
-      message: "id not provided",
+      status: 'fail',
+      message: 'id not provided',
     });
     return;
   }
-  const voucher = await Voucher.findById(id).populate("party").populate({
-    path: 'Items.item',  // Populate the item field inside Items array
+  const voucher = await Voucher.findById(id).populate('party').populate({
+    path: 'Items.item', // Populate the item field inside Items array
     model: 'Product',
-  })
+  });
   res.status(200).json({
-    status: "success",
+    status: 'success',
     voucher,
   });
-})
+});
 
 const getVouchersofDay = expressAsyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 30;
   const startOfDay = new Date();
-  startOfDay.setUTCHours(0, 0, 0, 0);
+  startOfDay.setHours(0, 0, 0, 0);
 
   const endOfDay = new Date();
-  endOfDay.setUTCHours(23, 59, 59, 999);
+  endOfDay.setHours(23, 59, 59, 999);
 
   const vehiclesIn = await TimeOffice.find({
     date: {
@@ -88,7 +90,7 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
     },
   })
     .sort({ date: -1 })
-    .populate("party");
+    .populate('party');
 
   voucher = voucher.filter((voucher: any) => {
     return vehiclesIn.find((vehicleIn: any) => {
@@ -101,7 +103,7 @@ const getVouchersofDay = expressAsyncHandler(async (req, res) => {
   });
 
   res.status(200).json({
-    status: "success",
+    status: 'success',
     voucher,
   });
 });
@@ -112,8 +114,8 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
   date.setHours(0, 0, 0, 0);
   if (!party || !vehicleNumber || !Items) {
     res.status(400).json({
-      status: "fail",
-      message: "party, vehicleNumber, Items are required",
+      status: 'fail',
+      message: 'party, vehicleNumber, Items are required',
     });
     return;
   }
@@ -137,8 +139,8 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
   for (let i = 0; i < itemsWithPrice.length; i++) {
     if (!itemsWithPrice[i].priceAssigned) {
       res.status(400).json({
-        status: "fail",
-        message: "price not assigned for item",
+        status: 'fail',
+        message: 'price not assigned for item',
       });
       return;
     }
@@ -168,7 +170,7 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
     const { unitPrice, netPrice, ...rest } = item;
     return rest;
   });
-  
+
   const voucher = await Voucher.create({
     party: party,
     vehicleNumber,
@@ -177,7 +179,7 @@ const createVoucher = expressAsyncHandler(async (req, res) => {
     }),
   });
   res.status(201).json({
-    status: "success",
+    status: 'success',
     // invoice,
     voucher,
   });
@@ -187,14 +189,14 @@ const deleteVoucher = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!id) {
     res.status(400).json({
-      status: "fail",
-      message: "id not provided",
+      status: 'fail',
+      message: 'id not provided',
     });
     return;
   }
   const voucher = await Voucher.findByIdAndDelete(id);
   res.status(200).json({
-    status: "success",
+    status: 'success',
     voucher,
   });
 });
@@ -203,8 +205,8 @@ const vehicleLeft = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!id) {
     res.status(400).json({
-      status: "fail",
-      message: "id not provided",
+      status: 'fail',
+      message: 'id not provided',
     });
     return;
   }
@@ -224,8 +226,8 @@ const vehicleLeft = expressAsyncHandler(async (req, res) => {
 
   if (timeOfficeRecord.length == 0) {
     res.status(400).json({
-      status: "fail",
-      message: "vehicle already left",
+      status: 'fail',
+      message: 'vehicle already left',
     });
     return;
   }
@@ -241,7 +243,7 @@ const vehicleLeft = expressAsyncHandler(async (req, res) => {
   );
 
   res.status(200).json({
-    status: "success",
+    status: 'success',
     timeOfficeRecord,
   });
 });
@@ -253,5 +255,5 @@ export {
   getVouchersofDay,
   vehicleLeft,
   getVoucher,
-  getFile
+  getFile,
 };

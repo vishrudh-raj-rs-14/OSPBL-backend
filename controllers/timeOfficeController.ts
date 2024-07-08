@@ -1,6 +1,6 @@
-import Party from "../models/partyModel";
-import timeOffice from "../models/timeOfficeModal";
-import expressAsyncHandler from "express-async-handler";
+import Party from '../models/partyModel';
+import timeOffice from '../models/timeOfficeModal';
+import expressAsyncHandler from 'express-async-handler';
 
 const getAlltimeOffices = expressAsyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 30;
@@ -8,13 +8,13 @@ const getAlltimeOffices = expressAsyncHandler(async (req, res) => {
   let timeOfficeRecords: any = timeOffice
     .find({})
     .sort({ date: -1 })
-    .populate("party");
+    .populate('party');
   if (limit != -1) {
     timeOfficeRecords = timeOfficeRecords.limit(limit);
   }
   timeOfficeRecords = await timeOfficeRecords;
   res.status(200).json({
-    status: "success",
+    status: 'success',
     timeOfficeRecords,
   });
 });
@@ -22,10 +22,10 @@ const getAlltimeOffices = expressAsyncHandler(async (req, res) => {
 const gettimeOfficeRecordsOfDay = expressAsyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 30;
   const startOfDay = new Date();
-  startOfDay.setUTCHours(0, 0, 0, 0);
+  startOfDay.setHours(0, 0, 0, 0);
 
   const endOfDay = new Date();
-  endOfDay.setUTCHours(23, 59, 59, 999);
+  endOfDay.setHours(23, 59, 59, 999);
   let timeOfficeRecords: any = timeOffice
     .find({
       date: {
@@ -34,13 +34,13 @@ const gettimeOfficeRecordsOfDay = expressAsyncHandler(async (req, res) => {
       },
     })
     .sort({ date: -1 })
-    .populate("party");
+    .populate('party');
   if (limit != -1) {
     timeOfficeRecords = timeOfficeRecords.limit(limit);
   }
   timeOfficeRecords = await timeOfficeRecords;
   res.status(200).json({
-    status: "success",
+    status: 'success',
     timeOfficeRecords,
   });
 });
@@ -48,25 +48,25 @@ const gettimeOfficeRecordsOfDay = expressAsyncHandler(async (req, res) => {
 const gettimeOfficebyId = expressAsyncHandler(async (req, res) => {
   if (!req.params.id) {
     res.status(400).json({
-      status: "fail",
-      message: "timeOffice id not provided",
+      status: 'fail',
+      message: 'timeOffice id not provided',
     });
     return;
   }
 
   const timeOfficeRecord = await timeOffice
     .findById(req.params.id)
-    .populate("party")
-    .populate("product");
+    .populate('party')
+    .populate('product');
   if (!timeOfficeRecord) {
     res.status(404).json({
-      status: "fail",
-      message: "timeOffice record not found",
+      status: 'fail',
+      message: 'timeOffice record not found',
     });
     return;
   }
   res.status(200).json({
-    status: "success",
+    status: 'success',
     timeOfficeRecord,
   });
 });
@@ -77,8 +77,8 @@ const createtimeOffice = expressAsyncHandler(async (req, res) => {
   const partyRecord = await Party.findById(party);
   if (!partyRecord) {
     res.status(404).json({
-      status: "fail",
-      message: "party record not found",
+      status: 'fail',
+      message: 'party record not found',
     });
     return;
   }
@@ -89,7 +89,7 @@ const createtimeOffice = expressAsyncHandler(async (req, res) => {
     description,
   });
   res.status(201).json({
-    status: "success",
+    status: 'success',
     timeOfficeRecord,
   });
 });
@@ -98,16 +98,16 @@ const updatetimeOffice = expressAsyncHandler(async (req, res) => {
   const { party, vehicleNumber, category, description } = req.body;
   if (!req.params.id) {
     res.status(400).json({
-      status: "fail",
-      message: "timeOffice id not provided",
+      status: 'fail',
+      message: 'timeOffice id not provided',
     });
     return;
   }
   const timeOfficeRecord = await timeOffice.findById(req.params.id);
   if (!timeOfficeRecord) {
     res.status(404).json({
-      status: "fail",
-      message: "timeOffice record not found",
+      status: 'fail',
+      message: 'timeOffice record not found',
     });
     return;
   }
@@ -117,7 +117,7 @@ const updatetimeOffice = expressAsyncHandler(async (req, res) => {
   timeOfficeRecord.description = description;
   await timeOfficeRecord.save();
   res.status(200).json({
-    status: "success",
+    status: 'success',
     timeOfficeRecord,
   });
 });
@@ -125,14 +125,14 @@ const updatetimeOffice = expressAsyncHandler(async (req, res) => {
 const deletetimeOffice = expressAsyncHandler(async (req, res) => {
   if (!req.params.id) {
     res.status(400).json({
-      status: "fail",
-      message: "timeOffice id not provided",
+      status: 'fail',
+      message: 'timeOffice id not provided',
     });
     return;
   }
   const timeOfficeRecord = await timeOffice.findByIdAndDelete(req.params.id);
   res.status(200).json({
-    status: "success",
+    status: 'success',
     timeOfficeRecord,
   });
 });
