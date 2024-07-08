@@ -38,13 +38,14 @@ const upload = (0, multer_1.default)({
 const uploadPDF = upload.single('pdfFile');
 exports.uploadPDF = uploadPDF;
 const processPDF = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("here", req.file, " ---");
     if (!req.file)
         return next();
     const pdfFileName = `pdf-${Date.now()}-${req.user._id}.pdf`;
     const savePath = path_1.default.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
-    console.log(savePath, pdfFileName);
     // Save the file
     fs_1.default.writeFile(savePath, req.file.buffer, (err) => {
+        console.log("here");
         if (err) {
             console.log(err);
             return next(err);
@@ -77,8 +78,6 @@ exports.getGradeCheckData = getGradeCheckData;
 const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { timeOfficeEntry, pdfFileName } = req.body;
     const weights = JSON.parse(req.body.weights);
-    console.log(__dirname);
-    console.log(pdfFileName);
     const toRecord = yield timeOfficeModal_1.default.findById(timeOfficeEntry);
     const party = toRecord === null || toRecord === void 0 ? void 0 : toRecord.party;
     const Items = weights;
