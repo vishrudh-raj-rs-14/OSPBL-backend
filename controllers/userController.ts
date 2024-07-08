@@ -27,6 +27,7 @@ const login = expressAsyncHandler(async (req, res) => {
     .json({
       status: "success",
       user,
+      token
     });
 });
 

@@ -39,6 +39,7 @@ const login = (0, express_async_handler_1.default)((req, res) => __awaiter(void 
         .json({
         status: "success",
         user,
+        token
     });
 }));
 exports.login = login;
