@@ -44,13 +44,11 @@ const getInvoice = (0, express_async_handler_1.default)((req, res) => __awaiter(
 }));
 exports.getInvoice = getInvoice;
 const getAllInvoices = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("here");
     const invoices = yield invoiceModel_1.default.find({})
         .sort({
         date: -1,
     })
         .populate("soldBy", "partyName");
-    console.log("here");
     res.status(200).json({
         status: "success",
         invoice: invoices,

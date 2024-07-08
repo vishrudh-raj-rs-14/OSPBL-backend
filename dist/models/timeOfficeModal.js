@@ -45,18 +45,15 @@ const timeOfficeSchema = new mongoose_1.default.Schema({
     },
 });
 timeOfficeSchema.pre("save", function (next) {
+    var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
-        this.vehicleNumber = this.vehicleNumber
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/[\s_-]+/g, "")
-            .replace(/^-+|-+$/g, "");
+        this.vehicleNumber = (_e = (_d = (_c = (_b = (_a = this === null || this === void 0 ? void 0 : this.vehicleNumber) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === null || _b === void 0 ? void 0 : _b.trim()) === null || _c === void 0 ? void 0 : _c.replace(/[^\w\s-]/g, "")) === null || _d === void 0 ? void 0 : _d.replace(/[\s_-]+/g, "")) === null || _e === void 0 ? void 0 : _e.replace(/^-+|-+$/g, "");
         next();
     });
 });
 timeOfficeSchema.pre("save", function (next) {
-    this.vehicleNumber = this.vehicleNumber.toUpperCase();
+    var _a;
+    this.vehicleNumber = (_a = this === null || this === void 0 ? void 0 : this.vehicleNumber) === null || _a === void 0 ? void 0 : _a.toUpperCase();
     next();
 });
 const TimeOffice = mongoose_1.default.model("TimeOffice", timeOfficeSchema);

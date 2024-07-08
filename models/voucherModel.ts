@@ -50,7 +50,7 @@ const voucherSchema = new mongoose.Schema({
 });
 
 voucherSchema.pre("save", function (next) {
-  this.vehicleNumber = this.vehicleNumber.toUpperCase();
+  this.vehicleNumber = this?.vehicleNumber?.toUpperCase();
   next();
 });
 

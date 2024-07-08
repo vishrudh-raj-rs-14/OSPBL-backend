@@ -57,7 +57,8 @@ const invoiceSchema = new mongoose_1.default.Schema({
     ],
 });
 invoiceSchema.pre('save', function (next) {
-    this.vehicleNumber = this.vehicleNumber.toUpperCase();
+    var _a;
+    this.vehicleNumber = (_a = this.vehicleNumber) === null || _a === void 0 ? void 0 : _a.toUpperCase();
     next();
 });
 const Invoice = mongoose_1.default.model('Invoice', invoiceSchema);

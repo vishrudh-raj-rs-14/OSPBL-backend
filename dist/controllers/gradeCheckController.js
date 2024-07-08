@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
+exports.getAllBlob = exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const invoiceModel_1 = __importDefault(require("../models/invoiceModel"));
 const voucherModel_1 = __importDefault(require("../models/voucherModel"));
@@ -55,6 +55,16 @@ const processPDF = (0, express_async_handler_1.default)((req, res, next) => __aw
     next();
 }));
 exports.processPDF = processPDF;
+const getAllBlob = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const listOfBlobs = yield (0, blob_1.list)({
+        limit: 1000,
+    });
+    res.status(200).json({
+        status: "success",
+        listOfBlobs,
+    });
+}));
+exports.getAllBlob = getAllBlob;
 const getGradeCheckData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limit = parseInt(req.query.limit) || 30;
     const startOfDay = new Date();

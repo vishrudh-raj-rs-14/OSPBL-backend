@@ -63,7 +63,7 @@ userSchema.pre('save', function (next) {
         if (!this.isModified('password')) {
             next();
         }
-        this.password = yield bcrypt_1.default.hash(this.password, 10);
+        this.password = (yield bcrypt_1.default.hash(this.password, 10));
         next();
     });
 });

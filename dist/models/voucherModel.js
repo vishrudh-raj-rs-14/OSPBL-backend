@@ -53,7 +53,8 @@ const voucherSchema = new mongoose_1.default.Schema({
     ],
 });
 voucherSchema.pre("save", function (next) {
-    this.vehicleNumber = this.vehicleNumber.toUpperCase();
+    var _a;
+    this.vehicleNumber = (_a = this === null || this === void 0 ? void 0 : this.vehicleNumber) === null || _a === void 0 ? void 0 : _a.toUpperCase();
     next();
 });
 const Voucher = mongoose_1.default.model("Voucher", voucherSchema);

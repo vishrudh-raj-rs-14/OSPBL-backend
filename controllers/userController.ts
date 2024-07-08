@@ -6,7 +6,7 @@ import User from "../models/userModel";
 const login = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email }).select("+password");
-  if (!user || !(await bcrypt.compare(password, user.password))) {
+  if (!user || !(await bcrypt.compare(password, user.password as string))) {
     res.status(401).json({
       status: "fail",
       message: "Invalid email or password",
@@ -34,15 +34,14 @@ const login = expressAsyncHandler(async (req, res) => {
 const register = expressAsyncHandler(async (req, res) => {
   const { name, email, password, role, mobileNo } = req.body;
 
-  // if (role == "ADMIN") {
-  //   res.status(400).json({
-  //     status: "fail",
-  //     message: "Cannot register as admin",
-  //   });
-  // }
+  if (role == "ADMIN") {
+    res.status(400).json({
+      status: "fail",
+      message: "Cannot register as admin",
+    });
+  }
   const checkExists = await User.findOne({ email });
   if (checkExists) {
-    console.log(checkExists);
     res.status(400).json({
       status: "fail",
       message: "User already exists",

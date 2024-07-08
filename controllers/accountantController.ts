@@ -33,13 +33,11 @@ const getInvoice = expressAsyncHandler(async (req, res) => {
 });
 
 const getAllInvoices = expressAsyncHandler(async (req, res) => {
-  console.log("here");
   const invoices = await Invoice.find({})
     .sort({
       date: -1,
     })
     .populate("soldBy", "partyName");
-  console.log("here");
 
   res.status(200).json({
     status: "success",

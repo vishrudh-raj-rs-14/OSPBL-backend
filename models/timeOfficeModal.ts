@@ -33,17 +33,17 @@ const timeOfficeSchema = new mongoose.Schema({
 });
 
 timeOfficeSchema.pre("save", async function (next) {
-  this.vehicleNumber = this.vehicleNumber
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "")
-    .replace(/^-+|-+$/g, "");
+  this.vehicleNumber = this?.vehicleNumber
+    ?.toLowerCase()
+    ?.trim()
+    ?.replace(/[^\w\s-]/g, "")
+    ?.replace(/[\s_-]+/g, "")
+    ?.replace(/^-+|-+$/g, "");
   next();
 });
 
 timeOfficeSchema.pre("save", function (next) {
-  this.vehicleNumber = this.vehicleNumber.toUpperCase();
+  this.vehicleNumber = this?.vehicleNumber?.toUpperCase();
   next();
 });
 

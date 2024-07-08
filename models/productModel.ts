@@ -34,12 +34,12 @@ const productSchema = new mongoose.Schema({
 
 productSchema.pre("save", async function (next) {
   console.log("here");
-  this.code = this.name
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  this.code = this?.name
+    ?.toLowerCase()
+    ?.trim()
+    ?.replace(/[^\w\s-]/g, "")
+    ?.replace(/[\s_-]+/g, "-")
+    ?.replace(/^-+|-+$/g, "");
   next();
 });
 

@@ -9,6 +9,6 @@ const router = express_1.default.Router();
 router.get('/', userController_1.protect, (0, userController_1.restricTo)('ADMIN'), userController_1.getAllUsers);
 router.delete('/:id', userController_1.protect, (0, userController_1.restricTo)('ADMIN'), userController_1.deleteUser);
 router.post('/login', userController_1.login);
-router.post('/register', userController_1.register);
+router.post('/register', userController_1.protect, (0, userController_1.restricTo)('ADMIN'), userController_1.register);
 router.post('/logout', userController_1.logout);
 exports.default = router;

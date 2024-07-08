@@ -45,14 +45,10 @@ const productSchema = new mongoose_1.default.Schema({
     },
 });
 productSchema.pre("save", function (next) {
+    var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
         console.log("here");
-        this.code = this.name
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/[\s_-]+/g, "-")
-            .replace(/^-+|-+$/g, "");
+        this.code = (_e = (_d = (_c = (_b = (_a = this === null || this === void 0 ? void 0 : this.name) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === null || _b === void 0 ? void 0 : _b.trim()) === null || _c === void 0 ? void 0 : _c.replace(/[^\w\s-]/g, "")) === null || _d === void 0 ? void 0 : _d.replace(/[\s_-]+/g, "-")) === null || _e === void 0 ? void 0 : _e.replace(/^-+|-+$/g, "");
         next();
     });
 });

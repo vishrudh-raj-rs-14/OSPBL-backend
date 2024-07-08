@@ -50,7 +50,7 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
-  this.password = await bcrypt.hash(this.password, 10);
+  this.password = ((await bcrypt.hash(this.password as string, 10)) as unknown) as string;
   next();
 });
 
