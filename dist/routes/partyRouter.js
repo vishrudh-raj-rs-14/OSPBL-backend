@@ -11,5 +11,5 @@ partyRouter.get("/", userController_1.protect, (0, userController_1.restricTo)("
 partyRouter.get("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), partyController_1.getPartybyId);
 partyRouter.post("/", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), partyController_1.createParty);
 partyRouter.put("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), partyController_1.updateParty);
-partyRouter.delete("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), partyController_1.deleteParty);
+partyRouter.delete("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN"), partyController_1.deleteParty);
 exports.default = partyRouter;
