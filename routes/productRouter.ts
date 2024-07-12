@@ -11,11 +11,11 @@ import { protect, restricTo } from "../controllers/userController";
 
 const productRouter = express.Router();
 
-productRouter.get("/", getAllProducts);
-productRouter.get("/:id", getProductbyId);
-productRouter.post("/", protect, restricTo("ADMIN"), createProduct);
-productRouter.put("/prices", updateManyPrices);
-productRouter.put("/:id", protect, restricTo("ADMIN"), updateProduct);
+productRouter.get("/", protect, restricTo("ADMIN", "MANAGER"),getAllProducts);
+productRouter.get("/:id", protect,  restricTo("ADMIN", "MANAGER"),getProductbyId);
+productRouter.post("/", protect, restricTo("ADMIN", "MANAGER"), createProduct);
+productRouter.put("/prices", protect,  restricTo("ADMIN", "MANAGER"),updateManyPrices);
+productRouter.put("/:id", protect, restricTo("ADMIN", "MANAGER"), updateProduct);
 productRouter.delete("/:id", protect, restricTo("ADMIN"), deleteProduct);
 
 export default productRouter;
