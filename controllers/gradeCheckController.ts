@@ -8,6 +8,7 @@ import multer from "multer";
 import path from "path";
 import fs from 'fs'
 import { del, list, put } from "@vercel/blob"; 
+import { CGST, SGST } from "../config";
 
 const multerStorage = multer.memoryStorage();
 
@@ -134,7 +135,7 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
       ...item,
       unitPrice: unitPrice?.amount,
       netPrice:
-        (unitPrice?.amount as number) * (item.firstWeight - item.secondWeight),
+        ((unitPrice?.amount as number) * (item.firstWeight - item.secondWeight) - item.loss),
       priceAssigned: unitPrice ? true : false,
     };
   });
@@ -153,6 +154,9 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
   const totalPurchase = itemsWithPrice.reduce((acc: number, item: any) => {
     return acc + item.netPrice;
   }, 0);
+
+
+  const totalAmountAfterTax = (totalPurchase*(SGST+CGST)/100)+totalPurchase;
 
   await Report.create({
     Items: itemList,
@@ -206,7 +210,8 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
       };
     }),
     totalPurchase,
-    balanceAmount: totalPurchase,
+    totalAmountAfterTax,
+    balanceAmount: totalAmountAfterTax,
   });
   const voucher = await Voucher.create({
     party: party,

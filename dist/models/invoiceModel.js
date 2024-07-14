@@ -23,6 +23,10 @@ const invoiceSchema = new mongoose_1.default.Schema({
         required: [true, 'Please enter your vehicleNumber'],
         maxLength: [30, 'Your vehicleNumber cannot exceed 30 characters'],
     },
+    totalAmountAfterTax: {
+        type: Number,
+        required: [true, 'Please enter your totalAmountAfterTax'],
+    },
     balanceAmount: {
         type: Number,
     },

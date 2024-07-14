@@ -21,6 +21,7 @@ const productModel_1 = __importDefault(require("../models/productModel"));
 const reportModel_1 = __importDefault(require("../models/reportModel"));
 const multer_1 = __importDefault(require("multer"));
 const blob_1 = require("@vercel/blob");
+const config_1 = require("../config");
 const multerStorage = multer_1.default.memoryStorage();
 const multerFilter = (req, file, cb) => {
     if (file && file.mimetype.startsWith('application/pdf')) {
@@ -122,7 +123,7 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         var _b, _c;
         // console.log(item);
         const unitPrice = (_c = (_b = (yield productModel_1.default.findById(item.materialId))) === null || _b === void 0 ? void 0 : _b.price) === null || _c === void 0 ? void 0 : _c.find((price) => String(price.party) == String(party));
-        return Object.assign(Object.assign({}, item), { unitPrice: unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount, netPrice: (unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount) * (item.firstWeight - item.secondWeight), priceAssigned: unitPrice ? true : false });
+        return Object.assign(Object.assign({}, item), { unitPrice: unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount, netPrice: ((unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount) * (item.firstWeight - item.secondWeight) - item.loss), priceAssigned: unitPrice ? true : false });
     }));
     const itemsWithPrice = yield Promise.all(itemsWithPricePromise);
     for (let i = 0; i < itemsWithPrice.length; i++) {
@@ -137,6 +138,7 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
     const totalPurchase = itemsWithPrice.reduce((acc, item) => {
         return acc + item.netPrice;
     }, 0);
+    const totalAmountAfterTax = (totalPurchase * (config_1.SGST + config_1.CGST) / 100) + totalPurchase;
     yield reportModel_1.default.create({
         Items: itemList,
         party: party,
@@ -186,7 +188,8 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
             };
         }),
         totalPurchase,
-        balanceAmount: totalPurchase,
+        totalAmountAfterTax,
+        balanceAmount: totalAmountAfterTax,
     });
     const voucher = yield voucherModel_1.default.create({
         party: party,
