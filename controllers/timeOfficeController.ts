@@ -31,8 +31,8 @@ const gettimeOfficeRecordsOfDay = expressAsyncHandler(async (req, res) => {
         $gte: startOfDay,
         $lt: endOfDay,
       },
-      vehicleStillIn:{
-        $eq: true
+      vehicleStillIn: {
+        $ne: false,
       }
     })
     .sort({ date: -1 })

@@ -45,7 +45,7 @@ const gettimeOfficeRecordsOfDay = (0, express_async_handler_1.default)((req, res
             $lt: endOfDay,
         },
         vehicleStillIn: {
-            $eq: true
+            $ne: false,
         }
     })
         .sort({ date: -1 })
