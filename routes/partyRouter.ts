@@ -9,8 +9,8 @@ import {
 import { protect, restricTo } from "../controllers/userController";
 const partyRouter = express.Router();
 
-partyRouter.get("/",protect, restricTo("ADMIN", "MANAGER") ,getAllParties);
-partyRouter.get("/:id", protect, restricTo("ADMIN", "MANAGER"), getPartybyId);
+partyRouter.get("/",protect, restricTo("ADMIN", "MANAGER", "SECURITY") ,getAllParties);
+partyRouter.get("/:id", protect, restricTo("ADMIN", "MANAGER", "SECURITY"), getPartybyId);
 partyRouter.post("/", protect, restricTo("ADMIN", "MANAGER"), createParty);
 partyRouter.put("/:id", protect, restricTo("ADMIN"), updateParty);
 partyRouter.delete("/:id", protect, restricTo("ADMIN"), deleteParty);
