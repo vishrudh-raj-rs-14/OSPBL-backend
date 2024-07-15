@@ -4,7 +4,6 @@ import expressAsyncHandler from 'express-async-handler';
 
 const getAlltimeOffices = expressAsyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 30;
-  console.log(limit);
   let timeOfficeRecords: any = timeOffice
     .find({})
     .sort({ date: -1 })
@@ -32,6 +31,9 @@ const gettimeOfficeRecordsOfDay = expressAsyncHandler(async (req, res) => {
         $gte: startOfDay,
         $lt: endOfDay,
       },
+      vehicleStillIn:{
+        $eq: true
+      }
     })
     .sort({ date: -1 })
     .populate('party');

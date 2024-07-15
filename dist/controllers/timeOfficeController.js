@@ -18,7 +18,6 @@ const timeOfficeModal_1 = __importDefault(require("../models/timeOfficeModal"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const getAlltimeOffices = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limit = parseInt(req.query.limit) || 30;
-    console.log(limit);
     let timeOfficeRecords = timeOfficeModal_1.default
         .find({})
         .sort({ date: -1 })
@@ -45,6 +44,9 @@ const gettimeOfficeRecordsOfDay = (0, express_async_handler_1.default)((req, res
             $gte: startOfDay,
             $lt: endOfDay,
         },
+        vehicleStillIn: {
+            $eq: true
+        }
     })
         .sort({ date: -1 })
         .populate('party');
