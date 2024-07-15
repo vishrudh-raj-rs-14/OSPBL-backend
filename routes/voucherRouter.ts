@@ -18,8 +18,8 @@ voucherRouter.get(
   restricTo("ADMIN", "GRADE-CHECKER", "SECURITY"),
   getVouchersofDay
 );
-voucherRouter.get('/get-pdf/:filename', protect, restricTo("ADMIN") , getFile);
-voucherRouter.get("/all", protect, restricTo("ADMIN"), getAllVouchers);
+voucherRouter.get('/get-pdf/:filename', protect, restricTo("ADMIN", "GRADE-CHECKER") , getFile);
+voucherRouter.get("/all", protect, restricTo("ADMIN", "GRADE-CHECKER"), getAllVouchers);
 voucherRouter.get(
   "/:id",
   protect,
