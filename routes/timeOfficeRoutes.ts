@@ -14,14 +14,14 @@ const timeOfficeRouter = express.Router();
 timeOfficeRouter.get(
   '/',
   protect,
-  restricTo("ADMIN", "SECURITY"),
+  restricTo("ADMIN", "SECURITY", "GRADE_CHECKER"),
   gettimeOfficeRecordsOfDay
 );
 timeOfficeRouter.get('/all', protect, restricTo('ADMIN'), getAlltimeOffices);
 timeOfficeRouter.get(
   '/today',
   protect,
-  restricTo('ADMIN', 'SECURITY'),
+  restricTo('ADMIN', 'SECURITY', "GRADE_CHECKER"),
   gettimeOfficeRecordsOfDay
 );
 timeOfficeRouter.get('/:id', protect, restricTo('ADMIN'), gettimeOfficebyId);
