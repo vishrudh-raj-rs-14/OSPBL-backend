@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const productController_1 = require("../controllers/productController");
 const userController_1 = require("../controllers/userController");
 const productRouter = express_1.default.Router();
-productRouter.get("/", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), productController_1.getAllProducts);
+productRouter.get("/", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER", "GRADE-CHECKER"), productController_1.getAllProducts);
 productRouter.get("/:id", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), productController_1.getProductbyId);
 productRouter.post("/", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), productController_1.createProduct);
 productRouter.put("/prices", userController_1.protect, (0, userController_1.restricTo)("ADMIN", "MANAGER"), productController_1.updateManyPrices);

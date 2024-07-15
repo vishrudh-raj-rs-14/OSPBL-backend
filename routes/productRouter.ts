@@ -11,7 +11,7 @@ import { protect, restricTo } from "../controllers/userController";
 
 const productRouter = express.Router();
 
-productRouter.get("/", protect, restricTo("ADMIN", "MANAGER"),getAllProducts);
+productRouter.get("/", protect, restricTo("ADMIN", "MANAGER", "GRADE-CHECKER"),getAllProducts);
 productRouter.get("/:id", protect,  restricTo("ADMIN", "MANAGER"),getProductbyId);
 productRouter.post("/", protect, restricTo("ADMIN", "MANAGER"), createProduct);
 productRouter.put("/prices", protect,  restricTo("ADMIN", "MANAGER"),updateManyPrices);
