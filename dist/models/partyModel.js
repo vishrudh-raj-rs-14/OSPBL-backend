@@ -44,17 +44,17 @@ const partySchema = new mongoose_1.default.Schema({
             addressLine1: {
                 type: String,
                 required: [true, 'Please enter your addressLine1'],
-                maxLength: [30, 'Your addressLine1 cannot exceed 30 characters'],
+                maxLength: [120, 'Your addressLine1 cannot exceed 30 characters'],
             },
             addressLine2: {
                 type: String,
                 // required: [true, "Please enter your addressLine2"],
-                maxLength: [30, 'Your addressLine2 cannot exceed 30 characters'],
+                maxLength: [120, 'Your addressLine2 cannot exceed 30 characters'],
             },
             city: {
                 type: String,
                 required: [true, 'Please enter your city'],
-                maxLength: [30, 'Your city cannot exceed 30 characters'],
+                maxLength: [50, 'Your city cannot exceed 30 characters'],
             },
             state: {
                 type: String,
@@ -64,7 +64,7 @@ const partySchema = new mongoose_1.default.Schema({
             pincode: {
                 type: String,
                 required: [true, 'Please enter your pincode'],
-                maxLength: [30, 'Your pincode cannot exceed 30 characters'],
+                maxLength: [10, 'Your pincode cannot exceed 30 characters'],
             },
         },
         // required: [true, "Please enter your address"],
