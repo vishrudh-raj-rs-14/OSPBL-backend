@@ -12,7 +12,7 @@ const partyRouter = express.Router();
 partyRouter.get("/",protect, restricTo("ADMIN", "MANAGER") ,getAllParties);
 partyRouter.get("/:id", protect, restricTo("ADMIN", "MANAGER"), getPartybyId);
 partyRouter.post("/", protect, restricTo("ADMIN", "MANAGER"), createParty);
-partyRouter.put("/:id", protect, restricTo("ADMIN", "MANAGER"), updateParty);
+partyRouter.put("/:id", protect, restricTo("ADMIN"), updateParty);
 partyRouter.delete("/:id", protect, restricTo("ADMIN"), deleteParty);
 
 export default partyRouter;
