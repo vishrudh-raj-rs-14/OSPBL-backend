@@ -15,7 +15,7 @@ const voucherRouter = express.Router();
 voucherRouter.get(
   "/",
   protect,
-  restricTo("ADMIN", "GRADE_CHECKER", "SECURITY"),
+  restricTo("ADMIN", "GRADE-CHECKER", "SECURITY"),
   getVouchersofDay
 );
 voucherRouter.get('/get-pdf/:filename', protect, restricTo("ADMIN") , getFile);
@@ -29,7 +29,7 @@ voucherRouter.get(
 voucherRouter.post(
   "/",
   protect,
-  restricTo("ADMIN", "GRADE_CHECKER"),
+  restricTo("ADMIN", "GRADE-CHECKER"),
   createVoucher
 );
 

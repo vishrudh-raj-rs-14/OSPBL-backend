@@ -4,8 +4,8 @@ import { addGradeCheckData, getGradeCheckData, processPDF, uploadPDF, deleteAllB
 
 const router = express.Router();
 
-router.get("/", protect,  restricTo("ADMIN", "GRADE_CHECKER"), getGradeCheckData);
-router.post("/", protect,  restricTo("ADMIN", "GRADE_CHECKER"), uploadPDF, processPDF, addGradeCheckData);
+router.get("/", protect,  restricTo("ADMIN", "GRADE-CHECKER"), getGradeCheckData);
+router.post("/", protect,  restricTo("ADMIN", "GRADE-CHECKER"), uploadPDF, processPDF, addGradeCheckData);
 router.delete('/files', protect, restricTo("ADMIN"), deleteAllBlob );
 // router.post("/report", protect,  restricTo("ADMIN", "GRADE_CHECKER"), uploadPDF , uploadfile);
 
