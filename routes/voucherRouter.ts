@@ -23,7 +23,7 @@ voucherRouter.get("/all", protect, restricTo("ADMIN", "GRADE-CHECKER"), getAllVo
 voucherRouter.get(
   "/:id",
   protect,
-  restricTo("ADMIN"),
+  restricTo("ADMIN", "GRADE-CHECKER"),
   getVoucher
 );
 voucherRouter.post(
