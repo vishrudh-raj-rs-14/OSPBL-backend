@@ -24,7 +24,10 @@ const getInvoiceForAccountant = expressAsyncHandler(async (req, res) => {
 
 const getInvoice = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
-  const invoice = await Invoice.findById(id).populate("soldBy");
+  const invoice = await Invoice.findById(id).populate("soldBy").populate({
+    path: 'Items.item', // Populate the item field inside Items array
+    model: 'Product',
+  });
 
   res.status(200).json({
     status: "success",

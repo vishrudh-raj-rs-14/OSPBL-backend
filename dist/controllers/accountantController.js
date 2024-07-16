@@ -36,7 +36,10 @@ const getInvoiceForAccountant = (0, express_async_handler_1.default)((req, res) 
 exports.getInvoiceForAccountant = getInvoiceForAccountant;
 const getInvoice = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const invoice = yield invoiceModel_1.default.findById(id).populate("soldBy");
+    const invoice = yield invoiceModel_1.default.findById(id).populate("soldBy").populate({
+        path: 'Items.item', // Populate the item field inside Items array
+        model: 'Product',
+    });
     res.status(200).json({
         status: "success",
         invoice,
