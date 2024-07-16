@@ -166,30 +166,7 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
     date,
   });
 
-  // const invoice = await Invoice.create({
-  //   soldBy: party,
-  //   vehicleNumber,
-  //   report: pdfFileName,
-  //   Items: itemsWithPrice.map((item: any) => {
-  //     return {
-  //       weight: item.firstWeight - item.secondWeight,
-  //       netPrice: item.netPrice,
-  //       unitPrice: item.unitPrice,
-  //       loss: item.loss,
-  //       item: item.materialId,
-  //       remarks: item.remarks,
-  //     };
-  //   }),
-  //   totalPurchase,
-  //   balanceAmount: totalPurchase,
-  // });
-  // const modifiedItems = Items.map((item: any) => {
-  //   const { unitPrice, netPrice, ...rest } = item;
-  //   return rest;
-  // });
-
  
-
   const invoice = await Invoice.create({
     soldBy: party,
     vehicleNumber,

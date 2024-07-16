@@ -146,27 +146,6 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         credit: 0,
         date,
     });
-    // const invoice = await Invoice.create({
-    //   soldBy: party,
-    //   vehicleNumber,
-    //   report: pdfFileName,
-    //   Items: itemsWithPrice.map((item: any) => {
-    //     return {
-    //       weight: item.firstWeight - item.secondWeight,
-    //       netPrice: item.netPrice,
-    //       unitPrice: item.unitPrice,
-    //       loss: item.loss,
-    //       item: item.materialId,
-    //       remarks: item.remarks,
-    //     };
-    //   }),
-    //   totalPurchase,
-    //   balanceAmount: totalPurchase,
-    // });
-    // const modifiedItems = Items.map((item: any) => {
-    //   const { unitPrice, netPrice, ...rest } = item;
-    //   return rest;
-    // });
     const invoice = yield invoiceModel_1.default.create({
         soldBy: party,
         vehicleNumber,
