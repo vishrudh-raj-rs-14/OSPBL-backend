@@ -17,7 +17,7 @@ const partyModel_1 = __importDefault(require("../models/partyModel"));
 const timeOfficeModal_1 = __importDefault(require("../models/timeOfficeModal"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const getAlltimeOffices = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const limit = parseInt(req.query.limit) || 30;
+    const limit = parseInt(req.query.limit) || 200;
     let timeOfficeRecords = timeOfficeModal_1.default
         .find({})
         .sort({ date: -1 })

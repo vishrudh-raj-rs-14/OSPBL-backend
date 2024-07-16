@@ -3,7 +3,7 @@ import timeOffice from '../models/timeOfficeModal';
 import expressAsyncHandler from 'express-async-handler';
 
 const getAlltimeOffices = expressAsyncHandler(async (req, res) => {
-  const limit = parseInt(req.query.limit as string) || 30;
+  const limit = parseInt(req.query.limit as string) || 200;
   let timeOfficeRecords: any = timeOffice
     .find({})
     .sort({ date: -1 })
