@@ -9,7 +9,7 @@ import Product from "../models/productModel";
 
 const getInvoiceForAccountant = expressAsyncHandler(async (req, res) => {
   const invoice = await Invoice.find({
-    balanceAmount: { $gt: 0 },
+    balanceAmount: { $gt: 1 },
   })
     .sort({
       date: -1,

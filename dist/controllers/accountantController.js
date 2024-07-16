@@ -22,7 +22,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const productModel_1 = __importDefault(require("../models/productModel"));
 const getInvoiceForAccountant = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const invoice = yield invoiceModel_1.default.find({
-        balanceAmount: { $gt: 0 },
+        balanceAmount: { $gt: 1 },
     })
         .sort({
         date: -1,
