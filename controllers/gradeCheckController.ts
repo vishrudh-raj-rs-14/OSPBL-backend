@@ -167,7 +167,7 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
     date,
   });
 
-  const counter = await Counter.findByIdAndUpdate(
+  const counter = await Counter.findOneAndUpdate(
     { model: 'invoice' },
     { $inc: { seq: 1 } },
     { new: true, upsert: true, setDefaultsOnInsert: true }
