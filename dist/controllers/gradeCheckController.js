@@ -22,6 +22,7 @@ const reportModel_1 = __importDefault(require("../models/reportModel"));
 const multer_1 = __importDefault(require("multer"));
 const blob_1 = require("@vercel/blob");
 const config_1 = require("../config");
+const Counter_1 = __importDefault(require("../models/Counter"));
 const multerStorage = multer_1.default.memoryStorage();
 const multerFilter = (req, file, cb) => {
     if (file && file.mimetype.startsWith('application/pdf')) {
@@ -146,14 +147,11 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         credit: 0,
         date,
     });
-    // const counter = await Counter.findByIdAndUpdate(
-    //   { model: 'invoice' },
-    //   { $inc: { seq: 1 } },
-    //   { new: true, upsert: true, setDefaultsOnInsert: true }
-    // );
+    const counter = yield Counter_1.default.findByIdAndUpdate({ model: 'invoice' }, { $inc: { seq: 1 } }, { new: true, upsert: true, setDefaultsOnInsert: true });
     const invoice = yield invoiceModel_1.default.create({
         soldBy: party,
         vehicleNumber,
+        invoiceNo: counter.seq,
         Items: itemsWithPrice.map((item) => {
             return {
                 weight: item.firstWeight - item.secondWeight,

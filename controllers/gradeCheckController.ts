@@ -167,15 +167,16 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
     date,
   });
 
-  // const counter = await Counter.findByIdAndUpdate(
-  //   { model: 'invoice' },
-  //   { $inc: { seq: 1 } },
-  //   { new: true, upsert: true, setDefaultsOnInsert: true }
-  // );
+  const counter = await Counter.findByIdAndUpdate(
+    { model: 'invoice' },
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true, setDefaultsOnInsert: true }
+  );
 
   const invoice = await Invoice.create({
     soldBy: party,
     vehicleNumber,
+    invoiceNo:counter.seq,
     Items: itemsWithPrice.map((item: any) => {
       return {
         weight: item.firstWeight - item.secondWeight,

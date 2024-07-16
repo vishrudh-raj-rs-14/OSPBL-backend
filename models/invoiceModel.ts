@@ -66,24 +66,6 @@ invoiceSchema.pre('save', function (next) {
   this.vehicleNumber = this.vehicleNumber?.toUpperCase();
   next();
 });
-invoiceSchema.pre('save', async function (next) {
-  try {
-    if (!this.isNew) {
-      return next();
-    }
-
-    const counter = await Counter.findByIdAndUpdate(
-      { model: 'invoice' },
-      { $inc: { seq: 1 } },
-      { new: true, upsert: true, setDefaultsOnInsert: true }
-    );
-
-    this.invoiceNo = counter.seq;
-    next();
-  } catch (err: any) {
-    next(err);
-  }
-});
 
 const Invoice = mongoose.model('Invoice', invoiceSchema);
 
