@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
+import Counter from './Counter';
 
 const invoiceSchema = new mongoose.Schema({
+  invoiceNo: {
+    type:Number,
+    required: [true, "Please provide invoice Number"]
+  },
   date: {
     type: Date,
     default: Date.now(),
@@ -60,6 +65,24 @@ const invoiceSchema = new mongoose.Schema({
 invoiceSchema.pre('save', function (next) {
   this.vehicleNumber = this.vehicleNumber?.toUpperCase();
   next();
+});
+invoiceSchema.pre('save', async function (next) {
+  try {
+    if (!this.isNew) {
+      return next();
+    }
+
+    const counter = await Counter.findByIdAndUpdate(
+      { _id: 'invoice' },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+
+    this.invoiceNo = counter.seq;
+    next();
+  } catch (err: any) {
+    next(err);
+  }
 });
 
 const Invoice = mongoose.model('Invoice', invoiceSchema);
