@@ -85,7 +85,7 @@ invoiceSchema.pre('save', function (next) {
             if (!this.isNew) {
                 return next();
             }
-            const counter = yield Counter_1.default.findByIdAndUpdate({ _id: 'invoice' }, { $inc: { seq: 1 } }, { new: true, upsert: true, setDefaultsOnInsert: true });
+            const counter = yield Counter_1.default.findByIdAndUpdate({ model: 'invoice' }, { $inc: { seq: 1 } }, { new: true, upsert: true, setDefaultsOnInsert: true });
             this.invoiceNo = counter.seq;
             next();
         }

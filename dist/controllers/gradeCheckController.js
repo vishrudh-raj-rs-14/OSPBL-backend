@@ -146,6 +146,11 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         credit: 0,
         date,
     });
+    // const counter = await Counter.findByIdAndUpdate(
+    //   { model: 'invoice' },
+    //   { $inc: { seq: 1 } },
+    //   { new: true, upsert: true, setDefaultsOnInsert: true }
+    // );
     const invoice = yield invoiceModel_1.default.create({
         soldBy: party,
         vehicleNumber,

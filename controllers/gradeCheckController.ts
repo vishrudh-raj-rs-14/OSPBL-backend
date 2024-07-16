@@ -9,6 +9,7 @@ import path from "path";
 import fs from 'fs'
 import { del, list, put } from "@vercel/blob"; 
 import { CGST, SGST } from "../config";
+import Counter from "../models/Counter";
 
 const multerStorage = multer.memoryStorage();
 
@@ -166,7 +167,12 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
     date,
   });
 
- 
+  // const counter = await Counter.findByIdAndUpdate(
+  //   { model: 'invoice' },
+  //   { $inc: { seq: 1 } },
+  //   { new: true, upsert: true, setDefaultsOnInsert: true }
+  // );
+
   const invoice = await Invoice.create({
     soldBy: party,
     vehicleNumber,

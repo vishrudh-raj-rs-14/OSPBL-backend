@@ -73,7 +73,7 @@ invoiceSchema.pre('save', async function (next) {
     }
 
     const counter = await Counter.findByIdAndUpdate(
-      { _id: 'invoice' },
+      { model: 'invoice' },
       { $inc: { seq: 1 } },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
