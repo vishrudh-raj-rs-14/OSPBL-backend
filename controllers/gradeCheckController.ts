@@ -161,7 +161,7 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
   await Report.create({
     Items: itemList,
     party: party,
-    debit: totalPurchase,
+    debit: totalAmountAfterTax,
     credit: 0,
     date,
   });
@@ -188,13 +188,7 @@ const addGradeCheckData = expressAsyncHandler(async (req, res) => {
   //   return rest;
   // });
 
-  await Report.create({
-    Items: itemList,
-    party: party,
-    debit: totalPurchase,
-    credit: 0,
-    date,
-  });
+ 
 
   const invoice = await Invoice.create({
     soldBy: party,

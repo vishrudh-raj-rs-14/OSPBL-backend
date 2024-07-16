@@ -142,7 +142,7 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
     yield reportModel_1.default.create({
         Items: itemList,
         party: party,
-        debit: totalPurchase,
+        debit: totalAmountAfterTax,
         credit: 0,
         date,
     });
@@ -167,13 +167,6 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
     //   const { unitPrice, netPrice, ...rest } = item;
     //   return rest;
     // });
-    yield reportModel_1.default.create({
-        Items: itemList,
-        party: party,
-        debit: totalPurchase,
-        credit: 0,
-        date,
-    });
     const invoice = yield invoiceModel_1.default.create({
         soldBy: party,
         vehicleNumber,
