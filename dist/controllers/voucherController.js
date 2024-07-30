@@ -43,7 +43,7 @@ const getAllVouchers = (0, express_async_handler_1.default)((req, res) => __awai
     if (date) {
         filter.date = date;
     }
-    const limit = parseInt(req.query.limit) || 30;
+    const limit = parseInt(req.query.limit) || 50;
     let vouchers = voucherModel_1.default.find(filter).sort({ date: -1 }).populate('party');
     if (limit != -1) {
         vouchers = vouchers.limit(limit);
