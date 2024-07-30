@@ -80,7 +80,7 @@ const deleteAllBlob = (0, express_async_handler_1.default)((req, res) => __await
 }));
 exports.deleteAllBlob = deleteAllBlob;
 const getGradeCheckData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const limit = parseInt(req.query.limit) || 30;
+    const limit = parseInt(req.query.limit) || 50;
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date();
