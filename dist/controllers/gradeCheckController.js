@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAllBlob = exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
+exports.testDone = exports.deleteAllBlob = exports.processPDF = exports.uploadPDF = exports.addGradeCheckData = exports.getGradeCheckData = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const invoiceModel_1 = __importDefault(require("../models/invoiceModel"));
 const voucherModel_1 = __importDefault(require("../models/voucherModel"));
@@ -20,16 +20,38 @@ const timeOfficeModal_1 = __importDefault(require("../models/timeOfficeModal"));
 const productModel_1 = __importDefault(require("../models/productModel"));
 const reportModel_1 = __importDefault(require("../models/reportModel"));
 const multer_1 = __importDefault(require("multer"));
-const blob_1 = require("@vercel/blob");
 const config_1 = require("../config");
 const Counter_1 = __importDefault(require("../models/Counter"));
+const client_s3_1 = require("@aws-sdk/client-s3");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config(); // Load env variables as early as possible
+// Validate credentials explicitly
+const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+if (!accessKeyId || !secretAccessKey) {
+    throw new Error("Missing Cloudflare R2 credentials.");
+}
+const s3Client = new client_s3_1.S3Client({
+    region: process.env.R2_REGION || "us-east-1", // Try using "us-east-1" instead of "auto"
+    endpoint: process.env.R2_ENDPOINT ||
+        "https://2a88b24b0b1d5be88f5e75910b3549e9.r2.cloudflarestorage.com",
+    credentials: {
+        accessKeyId,
+        secretAccessKey,
+    },
+    forcePathStyle: true, // Required for Cloudflare R2
+});
+const R2_BUCKET = process.env.R2_BUCKET || "ospbl-data";
+const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL ||
+    "https://2a88b24b0b1d5be88f5e75910b3549e9.r2.cloudflarestorage.com/ospbl-data";
+// Configure multer to use memory storage for PDF uploads
 const multerStorage = multer_1.default.memoryStorage();
 const multerFilter = (req, file, cb) => {
-    if (file && file.mimetype.startsWith('application/pdf')) {
+    if (file && file.mimetype.startsWith("application/pdf")) {
         cb(null, true);
     }
     else {
-        cb(new Error('Upload only PDF file'), false);
+        cb(new Error("Upload only PDF file"), false);
     }
 };
 const upload = (0, multer_1.default)({
@@ -37,41 +59,60 @@ const upload = (0, multer_1.default)({
     limits: { fileSize: 1 * 1024 * 1024 },
     fileFilter: multerFilter,
 });
-const uploadPDF = upload.array('pdfFile');
+const uploadPDF = upload.array("pdfFile");
 exports.uploadPDF = uploadPDF;
+// Process the uploaded PDFs and store them in Cloudflare R2
 const processPDF = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.files || req.files.length == 0)
+    if (!req.files || req.files.length === 0)
         return next();
     const files = req.files;
     req.body.pdfFiles = [];
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const pdfFileName = `pdf-${Date.now()}-${req.user._id}-${i + 1}.pdf`;
-        const blob = yield (0, blob_1.put)(pdfFileName, file.buffer, {
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-            access: 'public',
+        const command = new client_s3_1.PutObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: pdfFileName,
+            Body: file.buffer,
+            ContentType: file.mimetype,
         });
+        yield s3Client.send(command);
+        // Construct public URLs (adjust if your bucket/object settings differ)
+        const blob = {
+            url: `${R2_PUBLIC_URL}/${pdfFileName}`,
+            downloadUrl: `${R2_PUBLIC_URL}/${pdfFileName}`,
+        };
         req.body.pdfFiles.push({ pdfFileName, blob });
     }
-    // const savePath = path.join((process.env.PATH_TO_PDF || './public/pdf'), pdfFileName);
     next();
 }));
 exports.processPDF = processPDF;
+// Helper function to sort blobs (objects) by their LastModified date in descending order
 function sortByUploadedAtDesc(array) {
     array = array.map((ele) => {
-        return Object.assign(Object.assign({}, ele), { uploadedAt: new Date(ele.uploadedAt) });
+        return Object.assign(Object.assign({}, ele), { uploadedAt: new Date(ele.LastModified) });
     });
-    return array.sort((a, b) => {
-        return new Date(b.uploadedAt) > new Date(a.uploadedAt);
-    });
+    return array.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
 }
+// Delete the 10 most recent objects from Cloudflare R2
 const deleteAllBlob = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const listOfBlobs = yield (0, blob_1.list)({
-        limit: 1000,
+    const listCommand = new client_s3_1.ListObjectsV2Command({
+        Bucket: R2_BUCKET,
+        MaxKeys: 1000,
     });
-    const final = sortByUploadedAtDesc(listOfBlobs.blobs).slice(0, 10);
+    const listResponse = yield s3Client.send(listCommand);
+    const blobs = listResponse.Contents || [];
+    const final = sortByUploadedAtDesc(blobs).slice(0, 10);
     if (final.length > 0) {
-        yield (0, blob_1.del)(final.map((blob) => blob.url));
+        const deleteParams = {
+            Bucket: R2_BUCKET,
+            Delete: {
+                Objects: final.map((blob) => ({ Key: blob.Key })),
+                Quiet: false,
+            },
+        };
+        const deleteCommand = new client_s3_1.DeleteObjectsCommand(deleteParams);
+        yield s3Client.send(deleteCommand);
     }
     res.status(200).json({
         status: "success",
@@ -92,9 +133,9 @@ const getGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         },
     })
         .sort({ date: -1 })
-        .populate('party');
+        .populate("party");
     res.status(200).json({
-        status: 'success',
+        status: "success",
         voucher,
     });
 }));
@@ -110,8 +151,8 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
     date.setHours(0, 0, 0, 0);
     if (!party || !vehicleNumber || !Items) {
         res.status(400).json({
-            status: 'fail',
-            message: 'party, vehicleNumber, Items are required',
+            status: "fail",
+            message: "party, vehicleNumber, Items are required",
         });
         return;
     }
@@ -122,16 +163,17 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
     const itemList = yield Promise.all(itemListTemp);
     const itemsWithPricePromise = Items.map((item) => __awaiter(void 0, void 0, void 0, function* () {
         var _b, _c;
-        // console.log(item);
         const unitPrice = (_c = (_b = (yield productModel_1.default.findById(item.materialId))) === null || _b === void 0 ? void 0 : _b.price) === null || _c === void 0 ? void 0 : _c.find((price) => String(price.party) == String(party));
-        return Object.assign(Object.assign({}, item), { unitPrice: unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount, netPrice: ((unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount) * (item.firstWeight - item.secondWeight) - item.loss), priceAssigned: unitPrice ? true : false });
+        return Object.assign(Object.assign({}, item), { unitPrice: unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount, netPrice: (unitPrice === null || unitPrice === void 0 ? void 0 : unitPrice.amount) *
+                (item.firstWeight - item.secondWeight) -
+                item.loss, priceAssigned: unitPrice ? true : false });
     }));
     const itemsWithPrice = yield Promise.all(itemsWithPricePromise);
     for (let i = 0; i < itemsWithPrice.length; i++) {
         if (!itemsWithPrice[i].priceAssigned) {
             res.status(400).json({
-                status: 'fail',
-                message: 'price not assigned for item',
+                status: "fail",
+                message: "price not assigned for item",
             });
             return;
         }
@@ -139,7 +181,7 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
     const totalPurchase = itemsWithPrice.reduce((acc, item) => {
         return acc + item.netPrice;
     }, 0);
-    const totalAmountAfterTax = (totalPurchase * (config_1.SGST + config_1.CGST) / 100) + totalPurchase;
+    const totalAmountAfterTax = (totalPurchase * (config_1.SGST + config_1.CGST)) / 100 + totalPurchase;
     yield reportModel_1.default.create({
         Items: itemList,
         party: party,
@@ -147,7 +189,7 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         credit: 0,
         date,
     });
-    const counter = yield Counter_1.default.findOneAndUpdate({ model: 'invoice' }, { $inc: { seq: 1 } }, { new: true, upsert: true, setDefaultsOnInsert: true });
+    const counter = yield Counter_1.default.findOneAndUpdate({ model: "invoice" }, { $inc: { seq: 1 } }, { new: true, upsert: true, setDefaultsOnInsert: true });
     const invoice = yield invoiceModel_1.default.create({
         soldBy: party,
         vehicleNumber,
@@ -182,9 +224,15 @@ const addGradeCheckData = (0, express_async_handler_1.default)((req, res) => __a
         }),
     });
     res.status(201).json({
-        status: 'success',
-        // invoice,
+        status: "success",
         voucher,
     });
 }));
 exports.addGradeCheckData = addGradeCheckData;
+const testDone = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.status(200).json({
+        status: "success",
+        message: "test done",
+    });
+}));
+exports.testDone = testDone;
